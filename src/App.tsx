@@ -1,6 +1,3 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
 import './App.css'
 import { Route, Routes } from 'react-router-dom'
 import Navbar from './components/Navbar/Navbar'
@@ -12,18 +9,18 @@ import { Study } from './TypeFile'
 
 function App() {
 
-  const GoutStudyInfo = {
-    studyName: "Gout",
-    protocol: "SAP-001-202",
-    sponsor: "Shanton Pharma Co., Ltd.",
-    site: "105",
-  }
-  const PredictStudyInfo = {
-    studyName: "PREDICT",
-    protocol: "PREDICT-001",
-    sponsor: "Scipher Medicine",
-    site: "016"
-  }
+  // const GoutStudyInfo = {
+  //   studyName: "Gout",
+  //   protocol: "SAP-001-202",
+  //   sponsor: "Shanton Pharma Co., Ltd.",
+  //   site: "105",
+  // }
+  // const PredictStudyInfo = {
+  //   studyName: "PREDICT",
+  //   protocol: "PREDICT-001",
+  //   sponsor: "Scipher Medicine",
+  //   site: "016"
+  // }
 
   const predictStudy : Study = {
     studyInfo: {
@@ -132,7 +129,7 @@ function App() {
         id: "1",
         title: "UNSCHED",
         desc: "Change in Treatment",
-        visitType: "unsched",
+        visitType: "unscheduled",
       },
       2: {
         id: "2",
@@ -142,30 +139,30 @@ function App() {
       },
     }
   }
-  const BiogenStudyInfo = {
-    studyName: "Biogen",
-    protocol: "230LE303",
-    sponsor: "Biogen",
-    site: "1019"
-  }
-  const BMSStudyInfo = {
-    studyName: "BMS",
-    protocol: "IM011246",
-    sponsor: "Bristol Myers Squibb",
-    site: "0005"
-  }
-  const M23StudyInfo = {
-    studyName: "M23",
-    protocol: "M23-700",
-    sponsor: "AbbVie",
-    site: "802"
-  }
-  const SolsticeStudyInfo = {
-    studyName: "SOLSTICE",
-    protocol: "CNTO1959PSA3005",
-    sponsor: "Janssen",
-    site: "US10075"
-  }
+  // const BiogenStudyInfo = {
+  //   studyName: "Biogen",
+  //   protocol: "230LE303",
+  //   sponsor: "Biogen",
+  //   site: "1019"
+  // }
+  // const BMSStudyInfo = {
+  //   studyName: "BMS",
+  //   protocol: "IM011246",
+  //   sponsor: "Bristol Myers Squibb",
+  //   site: "0005"
+  // }
+  // const M23StudyInfo = {
+  //   studyName: "M23",
+  //   protocol: "M23-700",
+  //   sponsor: "AbbVie",
+  //   site: "802"
+  // }
+  // const SolsticeStudyInfo = {
+  //   studyName: "SOLSTICE",
+  //   protocol: "CNTO1959PSA3005",
+  //   sponsor: "Janssen",
+  //   site: "US10075"
+  // }
 
   return (
     <>

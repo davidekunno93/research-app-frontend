@@ -61,9 +61,9 @@ const AddSubjectModal = ({ open, nextSubjectId, onClose }: AddSubjectModalProps)
     const languageInputRef = useRef<HTMLInputElement>(null);
     const languageDropdownRef = useRef<HTMLInputElement>(null);
     const [languageDropdownOpen, setLanguageDropdownOpen] = useState<boolean>(false);
-    const closeAllDropdowns = () => {
-        // close all dropdown menus
-    }
+    // const closeAllDropdowns = () => {
+    //     // close all dropdown menus
+    // }
     // [enrollment]
     const enrollmentRef = useRef<HTMLInputElement>(null);
     const enrollmentDropdownRef = useRef<HTMLInputElement>(null);
@@ -401,87 +401,7 @@ const AddSubjectModal = ({ open, nextSubjectId, onClose }: AddSubjectModalProps)
         },
     }
 
-    const dayToDate = (days: number): string => {
-        const year = new Date().getFullYear();
-        const isLeapYear: boolean = year % 4 === 0;
-        const totalDays: number = isLeapYear ? 366 : 365;
-        if (days > totalDays) {
-            return "Too many days"
-        } else if (days < 0) {
-            return "Number of days must be positive"
-        }
-        const months = {
-            "01": 31,
-            "02": isLeapYear ? 29 : 28,
-            "03": 31,
-            "04": 30,
-            "05": 31,
-            "06": 30,
-            "07": 31,
-            "08": 31,
-            "09": 30,
-            "10": 31,
-            "11": 30,
-            "12": 31,
-        };
-        // if days is less than or equal to month days then stop 
-        const monthArr = Object.entries(months).sort((a, b) => parseInt(a[0]) - parseInt(b[0]));
-        for (let i = 0; i < monthArr.length; i++) {
-            const monthNum = monthArr[i][0];
-            const monthDays = monthArr[i][1];
-            if (days > monthDays) {
-                days -= monthDays;
-            } else {
-                const dayOfTheMonth = days.toString().length === 2 ? days.toString() : "0" + days.toString();
-                const monthOfTheYear = monthNum;
-                return dayOfTheMonth + "/" + monthOfTheYear + "/" + year.toString();
-            }
-        }
-        return "Function should never reach this point"
-    }
-    const dateToDay = (date: string): number => {
-        // this func doesn't validate the date exists i.e. 01/32/2024 would take
-        const year = new Date().getFullYear();
-        const isLeapYear: boolean = year % 4 === 0;
-        const dateMonth: string = date.slice(3, 5);
-        const dateDays: number = parseInt(date.slice(0, 2));
-        let days: number = 0;
-        const months = {
-            "01": 31,
-            "02": isLeapYear ? 29 : 28,
-            "03": 31,
-            "04": 30,
-            "05": 31,
-            "06": 30,
-            "07": 31,
-            "08": 31,
-            "09": 30,
-            "10": 31,
-            "11": 30,
-            "12": 31,
-        };
-        const monthArr = Object.entries(months).sort((a, b) => parseInt(a[0]) - parseInt(b[0]));
-        for (let i = 0; i < monthArr.length; i++) {
-            const monthNum: string = monthArr[i][0];
-            const monthDays: number = monthArr[i][1];
-            if (dateMonth === monthNum) {
-                // add days from date
-                days += dateDays;
-                // stop
-                break;
-            } else {
-                // add monthDays
-                days += monthDays;
-            };
-        };
-        return days;
-    };
-    const addDays = (date: string, days: number): string => {
-        let yearDay: number = dateToDay(date);
-        yearDay += days;
-        date = dayToDate(yearDay);
-        return date;
-    };
+    
     useEffect(() => {
         // console.log(addDays("06/06/2024", -7));
     }, []);
