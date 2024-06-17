@@ -1,4 +1,3 @@
-import React, { useEffect } from 'react'
 import "./pageheader.css"
 
 type studyInfo = {

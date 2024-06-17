@@ -530,11 +530,14 @@ const SubjectsPage = ({ study }: SubjectsPageProps) => {
         updateVisitToNotScheduled: function (id: string, subjectId: string, visitObj: StudyVisit) {
             // get subject visit
             const subjectsCopy = { ...subjects};
-            const thisSubjectVisit = subjectsCopy[subjectId].visits[visitObj.id];
+            // const thisSubjectVisit = subjectsCopy[subjectId].visits[visitObj.id];
             // reomve .date
             subjectsCopy[subjectId].visits[visitObj.id].date = "";
             // update status to not scheduled
             subjectsCopy[subjectId].visits[visitObj.id].status = "not scheduled";
+            
+            // separate this from the subject Function
+            visitFunctions.closeVisitDropdown(id);
 
             // if pivotol visit, change affected visits to unscheduled if they are "completed" or "missed"
         }
@@ -776,7 +779,8 @@ const SubjectsPage = ({ study }: SubjectsPageProps) => {
                                             </div>
                                         })}
                                         {Object.values(study.unscheduled).map((visit, index) => {
-                                            return <div key={index} className="col">
+                                            // need to remove visit.id in key
+                                            return <div key={visit.id+index} className="col">
                                                 <span className="material-symbols-outlined pointer visit-addBtn">add_circle</span>
                                             </div>
                                         })}
