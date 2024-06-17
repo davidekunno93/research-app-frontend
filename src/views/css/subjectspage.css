@@ -1,0 +1,448 @@
+.head {
+    display: flex;
+    flex-direction: column;
+    padding: 24px;
+}
+.head > .row {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 24px;
+}   
+
+.filter-dropdownDiv {
+    position: relative;
+}
+
+.filter-dropdown {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-end;
+    cursor: pointer;
+}
+
+.filter-dropdownDiv>.dropdown-selector {
+    background-color: white;
+    width: 150px;
+    border-radius: 8px;
+    border: 1px solid gainsboro;
+    box-shadow: 0 0 12px rgba(0, 0, 0, 0.07);
+    position: absolute;
+    top: 30px;
+    transition-duration: 0.2s;
+    z-index: 1;
+}
+
+.filter-dropdownDiv>.dropdown-selector.shown {
+    top: 30px;
+    opacity: 1;
+    visibility: visible;
+}
+
+.filter-dropdownDiv>.dropdown-selector.hidden {
+    top: 18px;
+    opacity: 0;
+    visibility: hidden;
+}
+
+.filter-dropdownDiv>.dropdown-selector>.option {
+    padding: 5px;
+    color: rgb(100, 100, 100);
+    transition-duration: 0.2s;
+    cursor: pointer;
+}
+
+.filter-dropdownDiv>.dropdown-selector>.option:hover {
+    color: black;
+    background-color: rgb(240, 240, 240);
+}
+
+
+
+.visit-icon-legend {
+    display: flex;
+    flex-direction: row;
+    gap: 18px;
+    margin-top: 12px;
+    color: #242424;
+}
+.icon-key {
+    display: flex;
+    gap: 4px;
+}
+.icon-key > span {
+    font-size: medium;
+}
+.icon-key > p {
+    font-size: 12px;
+}  
+
+
+
+
+.subject-table {
+    display: flex;
+    background-color: white;
+    border: 1px solid gainsboro;
+    /* background-color: beige; */
+    border-radius: 12px;
+    /* width: 96%; */
+    width: calc(100% - 48px);
+    box-sizing: border-box;
+    height: 400px;
+    margin-left: 24px;
+    overflow: hidden;
+    flex-direction: row;
+    color: #242424;
+}
+
+.subject-table>.subject-info {
+    width: 400px;
+    height: 100%;
+    /* background-color: lightpink; */
+    display: flex;
+    flex-direction: column;
+}
+
+.subject-table .title-row {
+    background-color: rgba(26, 255, 0, 0.2);
+    font-weight: 500;
+    color: black;
+}
+
+.subject-table .title-row,
+.subject-table .row {
+    display: flex;
+    flex-direction: row;
+    height: 44px;
+    border-bottom: 1px solid gainsboro;
+}
+
+.subject-table .title-row>.col,
+.subject-table .row>.col {
+    width: 140px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* height: 100%; */
+    /* border: 1px solid blueviolet; */
+    position: relative;
+    /* overflow: hidden; */
+}
+
+.col > .fill-div {
+    width: 100%;
+    height: 100%;
+    display: grid;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.dateBox {
+    position: relative;
+}
+
+
+.visit-level-icon {
+    top: -8px;
+    right: -8px;
+    position: absolute;
+}
+.visit-level-icon > span {
+    font-size: medium;
+}
+
+.col .icon-tray {
+    position: absolute;
+    display: flex;
+    flex-direction: row;
+    bottom: 0;
+    width: 100%;
+    justify-content: center;
+    align-items: flex-end;
+    /* gap: 2px; */
+    transition: 0.3s;
+
+    /* hidden styles */
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(12px);
+}
+
+.col:hover .icon-tray {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0px);
+}
+
+.icon-tray>span {
+    font-size: 9px;
+    color: rgba(0, 0, 0, 0.2);
+    padding: 0px 1px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.icon-tray>span:hover {
+    font-size: 14px;
+    transition: 0.2s;
+    color: rgba(0, 0, 0, 0.5);
+}
+.icon-tray>.green-icon.selected {
+    color: rgb(0, 200, 0);
+}
+.icon-tray>.red-icon.selected {
+    color: rgb(255, 0, 0);
+}
+.icon-tray>.blue-icon.selected {
+    color: rgb(0, 0, 255);
+}
+.icon-tray>.yellow-icon.selected {
+    color: rgb(255, 230, 0);
+}
+
+.col>.options-btn {
+    position: absolute;
+    right: 2px;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    /* hidden until hover */
+    opacity: 0;
+    transition: 0.3s;
+}
+
+.col:hover .options-btn,
+.col .options-btn.show {
+    opacity: 1;
+    transition: 0.3s;
+}
+
+.options-btn>span {
+    cursor: pointer;
+    font-size: 14px;
+    color: rgba(0, 0, 0, 0.2);
+    border: 1px solid transparent;
+    display: flex;
+    justify-content: center;
+    width: 10%;
+}
+
+.options-btn>span.pressed {
+    background-color: rgb(240, 240, 240);
+    border: 1px solid gainsboro;
+    border-radius: 8px;
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}
+
+.options-btn>span:hover {
+    color: rgba(0, 0, 0, 0.5);
+    transition: 0.2s;
+}
+
+.col .dropdown {
+    width: 150px;
+    /* height: 100px; */
+    position: absolute;
+    background-color: white;
+    border-radius: 4px;
+    border: 1px solid gainsboro;
+    box-shadow: 0 0 12px rgba(0, 0, 0, 0.07);
+    z-index: 1;
+    right: 100%;
+    top: 60%;
+    display: flex;
+    flex-direction: column;
+    transition: 0.2s;
+}
+.col .dropdown.hidden {
+    opacity: 0;
+    visibility: hidden;
+}
+.col .dropdown.shown {
+    opacity: 1;
+    visibility: visible;
+}
+.col .dropdown > .option {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 8px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+.col .dropdown > .option:hover {
+    background-color: rgba(240, 240, 240, 0.8);
+    transition: 0.2s;
+}
+.col .dropdown > .option.disabled {
+    pointer-events: none;
+    color: gainsboro;
+}
+
+.subject-table .row p {
+    font-size: 14px;
+}
+
+.subject-table .title-row>.col-options,
+.subject-table .row>.col-options {
+    width: 34px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.subject-table .title-row>.col.unscheduled {
+    background-color: rgba(26, 255, 0, 0.2);
+}
+
+.title-row .visit-description {
+    color: gray;
+    font-weight: 400;
+    font-size: x-small;
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    white-space: nowrap;
+}
+
+.visit-datepicker {
+    position: fixed;
+    transform: translateY(164px);
+    transition: 0.2s;
+    z-index: 1;
+}
+.visit-datepicker.hidden {
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(150px);
+}
+.visit-datepicker.shown {
+    opacity: 1;
+    visibility: visible;
+}
+.visit-datepicker > .header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    height: 24px;
+    margin-bottom: 4px;
+    position: relative;
+}
+.visit-datepicker > .header > .visit-status-dropper {
+    background-color: rgb(240, 240, 240);
+    border: 1px solid gainsboro;
+    height: 24px;
+    width: 160px;
+    border-radius: 4px;
+    display: flex;
+    flex-direction: row;
+    padding: 0px 8px 0px 12px;
+    box-sizing: border-box;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+}
+.visit-datepicker > .header > .visit-status-dropper span {
+    font-size: medium;
+}
+.visit-datepicker > .header > .visit-status-dropper p {
+    font-size: 12px
+}
+.visit-datepicker > .header > .visit-status-dropdown {
+    position: absolute;
+    width: 160px;
+    display: flex;
+    flex-direction: column;
+    background-color: rgb(240, 240, 240);
+    border: 1px solid gainsboro;
+    box-sizing: border-box;
+    border-radius: 4px;
+    top: calc(100% + 4px);
+    z-index: 2;
+}
+.visit-datepicker > .header > .visit-status-dropdown.hidden {
+    opacity: 0;
+    visibility: hidden;
+    transition: 0.2s;
+}
+.visit-datepicker > .header > .visit-status-dropdown.shown {
+    opacity: 1;
+    visibility: visible;
+    transition: 0.2s;
+}
+.visit-status-dropdown > .option {
+    display: flex;
+    flex-direction: row;
+    gap: 6px;
+    padding: 6px 12px;
+    align-items: center;
+    cursor: pointer;
+    transition: 0.2s;
+}
+.visit-status-dropdown > .option.underlined {
+    display: flex;
+    flex-direction: row;
+    gap: 6px;
+    padding: 6px 12px;
+    align-items: center;
+    cursor: pointer;
+    transition: 0.2s;
+    position: relative;
+}
+.option.underlined::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 90%;
+    height: 1px;
+    background-color: gainsboro;
+}
+.visit-status-dropdown > .option:hover {
+    background-color: rgb(220, 220, 220);
+    transition: 0.2s;
+}
+.visit-status-dropdown > .option p {
+    font-size: 12px;
+}
+.visit-status-dropdown > .option span {
+    font-size: medium;
+}
+
+.visit-datepicker .circle-closeBtn {
+    display: flex;
+    align-items: center;
+}
+.visit-datepicker .circle-closeBtn span{
+    font-size: large;
+    cursor: pointer;
+}
+.circle-closeBtn {
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    transition: 0.2s;
+    cursor: pointer;
+}
+.circle-closeBtn:hover {
+    background-color: rgba(0, 0, 0, 0.07);
+    transition: 0.2s;
+}
+.visit-addBtn {
+    transition: 0.2s;
+}
+.visit-addBtn:hover {
+    transform: translateY(-3px);
+    transition: 0.2s;
+}

@@ -1,0 +1,135 @@
+.navbar {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    height: 60px;
+    width: 100vw;
+    padding: 12px;
+    box-sizing: border-box;
+    background-color: white;
+    border-bottom: 1px solid gainsboro;
+    position: relative;
+    z-index: 10;
+}
+.navbar-logo {
+    height: 100%;
+}
+.navbar-navigations {
+    height: 90%;
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+    padding: 0px 20px;
+    position: relative;
+}
+.navbar-navigations > .option {
+    padding: 0px 12px;
+    font-weight: 500;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    transition-duration: 0.2s;
+    cursor: pointer;
+}
+.navbar-navigations > .option:hover {
+    background-color: rgba(0, 132, 255, 0.07);
+}
+.navigations-dropdown {
+    position: absolute;
+    width: 160px;
+    /* height: 500px; */
+    background-color: white;
+    border: 1px solid gainsboro;
+    box-shadow: 0 0 12px rgba(0, 0, 0, 0.07);
+    border-radius: 8px;
+    right: -20px;
+    top: 50px;
+    transition-duration: 0.2s;
+}
+.navigations-dropdown.hidden {
+    top: 30px;
+    opacity: 0;
+    visibility: hidden;
+}
+.navigations-dropdown.shown {
+    top: 50px;
+    opacity: 1;
+    visibility: visible;
+}
+.navigations-dropdown > .option {
+    padding: 8px;
+    transition-duration: 0.2s;
+    cursor: pointer;
+}
+.navigations-dropdown > .option:hover {
+    background-color: rgb(245, 245, 245);
+    background-color: rgba(0, 132, 255, 0.07);
+    transition-duration: 0.2s;
+}
+.navigations-dropdown > .option p {
+    color: rgb(100, 100, 100);
+    transition-duration: 0.2s;
+}
+.navigations-dropdown > .option:hover p {
+    color: black;
+    transition-duration: 0.2s;
+}
+.navbar-profile {
+    height: 100%;
+    display: flex;
+    flex-direction: row;
+    margin: 0 0 0 auto;
+    cursor: pointer;
+    position: relative;
+}
+.profile-img {
+    height: 34px;
+    width: 34px;
+    border-radius: 50%;
+    background-color: mediumturquoise;
+}
+.profile-name {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding-left: 8px;
+}
+.profile-dropDown {
+    position: absolute;
+    width: 200px;
+    /* height: 200px; */
+    background-color: white;
+    border: 1px solid gainsboro;
+    box-shadow: 0 0 12px rgba(0, 0, 0, 0.07);
+    border-radius: 8px;
+    top: 50px;
+    right: 0;
+    transition-duration: 0.2s;
+}
+.profile-dropDown.hidden {
+    top: 30px;
+    opacity: 0;
+    visibility: hidden;
+}
+.profile-dropDown.shown {
+    top: 50px;
+    opacity: 1;
+    visibility: visible;
+}
+.profile-dropDown > .option {
+    padding: 8px 12px;
+    cursor: pointer;
+    transition-duration: 0.2s;
+    display: flex;
+    flex-direction: row;
+    gap: 8px;
+    color: rgb(100, 100, 100);
+}
+.profile-dropDown > .option:hover {
+    background-color: rgb(240, 240, 240);
+    transition-duration: 0.2s;
+    color: black;
+    padding-left: 16px;
+}
+
+

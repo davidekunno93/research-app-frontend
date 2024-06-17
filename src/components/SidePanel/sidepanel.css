@@ -1,0 +1,39 @@
+.sidepanel-container {
+    width: 240px;
+    height: 100%;
+    border-right: 1px solid gainsboro;
+    background-color: white;
+    padding: 24px 0px 12px 0px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+.sidepanel-container > .option {
+    padding: 12px 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    color: black;
+    /* border: 1px solid salmon; */
+    transition-duration: 0.2s;
+    border-left: 3px solid transparent;
+    color: rgb(130, 130, 130);
+}
+.sidepanel-container > .option:hover {
+    border-left: 3px solid rgb(9, 175, 0);
+    padding-left: 28px;
+    transition-duration: 0.2s;
+    color: rgb(0, 190, 0);
+}
+.sidepanel-container > .option p {
+    font-size: 14px;
+    font-weight: 400;
+}
+.sidepanel-container > .option:hover p {
+    font-weight: 500;
+}
+.sidepanel-container > .option span {
+    font-size: 20px;
+}

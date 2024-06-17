@@ -1,0 +1,134 @@
+.modal {
+    background-color: white;
+    border-radius: 5px;
+    margin: auto;
+    padding: 24px ;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+.modal > .closeBtn {
+    position: absolute;
+    /* top: 24px; */
+    right: 32px;
+    color: #242424;
+}
+.modal > .closeBtn > span {
+    font-size: medium;
+}
+.modal .footer {
+    display: flex;
+    flex-direction: row;
+    gap: 4px;
+    margin: auto 0 0 0;
+    padding-top: 12px
+}
+.modal > .body {
+    padding: 0px 4px;
+}
+.modal .title {
+    align-self: flex-start;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin-bottom: 16px;
+}
+.modal .title > .main {
+    font-size: large;
+    font-weight: 600;
+    color: #242424;
+}
+.modal .title > .sub {
+    font-size: 14px;
+    color: rgb(180, 180, 180);
+}
+
+.modal .section {
+    width: 100%;
+    /* background-color: aliceblue; */
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 16px;
+}
+.section .row {
+    display: flex;
+    flex-direction: row;
+    /* justify-content: space-between; */
+    gap: 32px;
+    margin-bottom: 8px;
+    box-sizing: border-box;
+}
+.section .row-2 {
+    display: flex;
+    flex-direction: row;
+    margin-bottom: 8px;
+    box-sizing: border-box;
+}
+
+.modal .heading {
+    font-size: small;
+    font-weight: 500;
+    align-self: flex-start;
+    color: rgb(0, 81, 255);
+}
+.modal .subheading {
+    font-size: small;
+    font-weight: 600;
+    color: #242424;
+    margin-left: 4px;
+}
+
+.modal.add-subject {
+    width: 467px;
+    /* height: 540px; */
+}
+.modal.add-subject .element {
+    /* background-color: beige; */
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    position: relative;
+}
+
+.enrollment-select {
+    position: relative;
+}
+.enrollment-select > .dropper {
+    display: flex;
+    flex-direction: row;
+    cursor: pointer;
+}       
+.enrollment-select > .dropdown {
+    width: 114px;
+    /* height: 100px; */
+    background-color: white;
+    border: 1px solid gainsboro;
+    box-shadow: 0 0 12px rgba(0, 0, 0, 0.07);
+    border-radius: 5px;
+    top: 100%;
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    z-index: 1;
+}
+.enrollment-select > .dropdown.hidden {
+    opacity: 0;
+    visibility: hidden;
+    display: none;
+}
+.enrollment-select > .dropdown > .option {
+    padding: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #242424;
+    font-size: 11px;
+    transition: 0.2s;
+    cursor: pointer;
+}
+.enrollment-select > .dropdown > .option:hover {
+    background-color: rgba(240, 240, 240, 0.8);
+    transition: 0.2s;
+}
