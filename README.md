@@ -49,3 +49,7 @@ icf signed
 
 <!-- Cool extra features to add -->
 notifications when visits are coming up
+icf must be signed at screening feedback
+update subject status (screening/rando/etc. as updating visit dates)
+finalize subject status code in addsubjectmodal, esp. w optional ICFs, how is that to be handled?
+how do you see visit general window

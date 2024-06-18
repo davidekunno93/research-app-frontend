@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import "./css/subjectspage.css"
 import AddSubject from '../components/Modals/AddSubjectModal'
 import ReactDatePicker from 'react-datepicker'
-import { PredictSubject, Study, StudyVisit, SubjectVisit, SubjectsState, VisitStatus } from '../TypeFile'
+import { PredictSubject, Study, StudyUnscheduledVisit, StudyVisit, SubjectPrecursor, SubjectUnscheduledVisit, SubjectVisit, SubjectVisitEmpty, SubjectsState, VisitStatus } from '../TypeFile'
 
 
 
@@ -160,6 +160,8 @@ const SubjectsPage = ({ study }: SubjectsPageProps) => {
     }, [])
     // [onload]
     // [elements]
+    // search bar
+    const [searchText, setSearchText] = useState<string | null>(null);
     // filter dropdown code
     const [filterDropdownOpen, setFilterDropdownOpen] = useState<boolean>(false);
     const filterDropdownRef = useRef<HTMLInputElement>(null);
@@ -175,7 +177,7 @@ const SubjectsPage = ({ study }: SubjectsPageProps) => {
         window.addEventListener('click', hideOnClickOutsideFilterDropdown, true);
         return () => window.removeEventListener('click', hideOnClickOutsideFilterDropdown, true);
     })
-    const [filterValue, setFilterValue] = useState<any>("None");
+    const [filterValue, setFilterValue] = useState<any>("All");
     const updateFilterValue = (filter: any) => {
         setFilterValue(filter);
         setFilterDropdownOpen(false);
@@ -258,8 +260,14 @@ const SubjectsPage = ({ study }: SubjectsPageProps) => {
                 comments: {},
             },
         },
-        unscheduledVisits: {}
+        unscheduledVisits: {
 
+        },
+        unscheduledAfterVisit: {
+            "visit-1": [],
+            "visit-2": [],
+            "visit-3": [],
+        }
     }
     const [subjects, setSubjects] = useState<SubjectsState>({
         "016-0001": subjectTest,
@@ -358,6 +366,49 @@ const SubjectsPage = ({ study }: SubjectsPageProps) => {
     // status = completed - yes date, check targetDate + window start/end, leave icfSigned, check oow
     // status = missed - no date, leave targetDate + window start/end, no icfSigned, no oow --> if og status then update to completed
     const subjectFunctions = {
+        addUnscheduledVisit: function (subjectId: string, visitObj: StudyUnscheduledVisit, date: Date) {
+            // get subject
+            const subjectsCopy = { ...subjects };
+            const nextVisitNum: string = (Object.values(subjectsCopy[subjectId].unscheduledVisits).length + 1).toString();
+            // add unscheduled visit w/date
+            subjectsCopy[subjectId].unscheduledVisits[nextVisitNum] = {
+                id: nextVisitNum,
+                title: visitObj.title,
+                date: timeFunctions.datinormal(date),
+                visitType: visitObj.visitType,
+                status: visitDatePickerStatus ?? "scheduled",
+                comments: {}
+            }
+            // find unscheduledAfterVisit
+            const mostRecentVisitNum = subjectFunctions.getMostRecentVisit(subjectId, date);
+            subjectsCopy[subjectId].unscheduledAfterVisit[mostRecentVisitNum].push(visitObj.id);
+            setSubjects(subjectsCopy);
+
+
+        },
+        getMostRecentVisit: function (subjectId: string, date: Date): string {
+            const subjectsCopy = { ...subjects };
+            let koth_date = "";
+            let koth_visitNum = "";
+            const visitNums = study.visitOrder
+            // loop thru all subject visits
+            // check visit date - condition it is before param date, and later than koth date
+            for (let i = 0; i < visitNums.length; i++) {
+                const subjectVisit = subjectsCopy[subjectId].visits[visitNums[i]];
+                if (subjectVisit.date && new Date(subjectVisit.date) < date) {
+                    if (koth_date === "") {
+                        koth_date = subjectVisit.date;
+                        koth_visitNum = subjectVisit.id;
+                    } else if (new Date(subjectVisit.date) > new Date(koth_date)) {
+                        koth_date = subjectVisit.date;
+                        koth_visitNum = subjectVisit.id;
+                    } else {
+                        continue
+                    }
+                }
+            }
+            return koth_visitNum;
+        },
         toggleICFSigned: function (subjectId: string, visitObj: StudyVisit, icfSigned?: boolean) {
             const subjectsCopy = { ...subjects };
             const visitNum = visitObj.id;
@@ -460,27 +511,13 @@ const SubjectsPage = ({ study }: SubjectsPageProps) => {
                             subjectsCopy[subjectId].visits[followUpVisit.id].windowStart = timeFunctions.addDays(selectedDate, followUpVisit.windowDaysFrom.min);
                             subjectsCopy[subjectId].visits[followUpVisit.id].windowEnd = timeFunctions.addDays(selectedDate, followUpVisit.windowDaysFrom.max);
                             subjectsCopy[subjectId].visits[followUpVisit.id].oow = isOOW(subjectFollowUpVisit);
-                        }  
+                        }
                     }
                 }
             }
 
             // check oow
             subjectsCopy[subjectId].visits[visitNum].oow = isOOW(thisSubjectVisit);
-            // if date is before windowStart, or after windowEnd - set oow to true else false
-            // if (thisSubjectVisit.windowStart && thisSubjectVisit.windowEnd) {
-            //     if (newDate < new Date(thisSubjectVisit.windowStart) || newDate > new Date(thisSubjectVisit.windowEnd)) {
-            //         subjectsCopy[subjectId].visits[visitNum].oow = true;
-            //     } else {
-            //         subjectsCopy[subjectId].visits[visitNum].oow = false;
-            //     }
-            // }
-            // check all affected visits for oow
-            // if screening - check baseline and run-in?
-            // if baseline - check run-in? and treatments and end-of-treatment
-            // if eot - check follow-ups
-            // code added in condition blocks
-
             setSubjects(subjectsCopy);
         },
         updateVisitStatus: function (subjectId: string, visitObj: StudyVisit, newStatus: VisitStatus) {
@@ -488,31 +525,140 @@ const SubjectsPage = ({ study }: SubjectsPageProps) => {
             // update visit status
             const subjectsCopy = { ...subjects };
             let visitNum = visitObj.id;
+
+            const currentStatus = subjectsCopy[subjectId].visits[visitNum].status;
+
+            if (currentStatus === "scheduled" || currentStatus === "completed") {
+                if (newStatus === "not scheduled" || newStatus === "missed") {
+                    subjectsCopy[subjectId].visits[visitNum].oow = false; // needed?
+                    subjectsCopy[subjectId].visits[visitNum].icfSigned = false; // needed?
+                    subjectFunctions.updateAffectedDates(subjectId, visitObj, "remove");
+                } else if (newStatus === "scheduled" || newStatus === "completed") {
+                    // subjects[subjectId].visits[visitNum].status = newStatus;
+                    subjectsCopy[subjectId].visits[visitNum].icfSigned = false;
+                }
+            } else if (currentStatus === "not scheduled") {
+                if (newStatus === "missed") {
+                    // subjects[subjectId].visits[visitNum].status = newStatus;
+                    subjectFunctions.updateVisitToMissed(subjectId, visitObj);
+                }
+            } else if (currentStatus === "missed") {
+                if (newStatus === "not scheduled") {
+                    // subjects[subjectId].visits[visitNum].status = newStatus;
+                    // if eot, affected visits are already reset, all other pivotals cannot be missed to begin with
+                }
+            }
             subjects[subjectId].visits[visitNum].status = newStatus;
-            // if prev status = not scheduled
-            // not scheduled - no change
-            // scheduled - open datepicker
-            // completed - open datepicker
+            setSubjects(subjectsCopy);
+
+            // status from - to
+            // scheduled - not scheduled > if pivotal visit, update affected visits
+            // scheduled - completed > no change, just update status
+            // scheduled - scheduled > X
+            // scheduled - missed > if pivotal visit, update affected visits
+            // completed - not scheduled > if pivotal visit, update affected visits
+            // completed - completed > X
+            // completed - scheduled > no change, just update status
+            // completed - missed > if pivotal visit, update affected visits
+
+            // not scheduled - missed > if pivotal (alert cannot be missed), else no change, just update status
+
+            // missed - not scheduled > if pivotal visit, update affected visits, else just update status
 
 
 
-            // if status = not scheduled
-            // modal pop up to status guard
-
-            // if status = scheduled
-
-            // if status = completed
-            // if status = missed
+            // missed - scheduled (open datepicker)
+            // missed - completed (open datepicker)
+            // not scheduled - scheduled (open datepicker)
+            // not scheduled - completed (open datepicker)
 
 
+
+
+        },
+        updateAffectedDates: function (subjectId: string, visitObj: StudyVisit, newDate: Date | "remove") {
+            const subjectsCopy = { ...subjects };
+            const visitType = visitObj.visitType;
+            const visitNum = visitObj.id;
+            let selectedDate = null;
+            if (newDate !== "remove") {
+                selectedDate = timeFunctions.datinormal(newDate);
+            };
+
+            // set new Date or remove date of this visit
+            subjectsCopy[subjectId].visits[visitNum].date = selectedDate ?? "";
+            if (!selectedDate) {
+                // remove action
+                subjectsCopy[subjectId].visits[visitNum].oow = false;
+                subjectsCopy[subjectId].visits[visitNum].icfSigned = false;
+            };
+
+            if (visitType !== "screening" && visitType !== "baseline" && visitType !== "end-of-treatment") {
+                // nothing needs to be updated or removed
+            } else if (visitType === "screening") {
+                // update baseline target date
+                const baselineVisitNum = study.visitTypes["baseline"][0];
+                const baselineVisit = study.schedule[baselineVisitNum];
+                const subjectBaselineVisit = subjectsCopy[subjectId].visits[baselineVisit.id]
+                if (baselineVisit.visitType === "baseline") {
+                    subjectsCopy[subjectId].visits[baselineVisit.id].targetDate = selectedDate ? timeFunctions.addDays(selectedDate, baselineVisit.daysFromLastCheckpoint) : "";
+                    subjectsCopy[subjectId].visits[baselineVisit.id].windowStart = selectedDate ? timeFunctions.addDays(selectedDate, baselineVisit.windowDaysFrom.min) : "";
+                    subjectsCopy[subjectId].visits[baselineVisit.id].windowEnd = selectedDate ? timeFunctions.addDays(selectedDate, baselineVisit.windowDaysFrom.max) : "";
+                    subjectsCopy[subjectId].visits[baselineVisit.id].oow = selectedDate ? isOOW(subjectBaselineVisit) : false;
+                }
+                // missing run-in code
+            } else if (visitType === "baseline") {
+                // update treatment targets
+                // update end of treatment target
+                const treatmentVisitNums = study.visitTypes["treatment"];
+                for (let i = 0; i < treatmentVisitNums.length; i++) {
+                    let treatmentVisit = study.schedule[treatmentVisitNums[i]];
+                    const subjectTreatmentVisit = subjectsCopy[subjectId].visits[treatmentVisit.id];
+                    if (treatmentVisit.visitType === "treatment") {
+                        subjectsCopy[subjectId].visits[treatmentVisit.id].targetDate = selectedDate ? timeFunctions.addDays(selectedDate, treatmentVisit.daysFromLastCheckpoint) : "";
+                        subjectsCopy[subjectId].visits[treatmentVisit.id].windowStart = selectedDate ? timeFunctions.addDays(selectedDate, treatmentVisit.windowDaysFrom.min) : "";
+                        subjectsCopy[subjectId].visits[treatmentVisit.id].windowEnd = selectedDate ? timeFunctions.addDays(selectedDate, treatmentVisit.windowDaysFrom.max) : "";
+                        subjectsCopy[subjectId].visits[treatmentVisit.id].oow = selectedDate ? isOOW(subjectTreatmentVisit) : false;
+                    }
+                }
+                if (study.visitTypes["end-of-treatment"].length > 0) {
+                    const eotVisitNum = study.visitTypes["end-of-treatment"][0];
+                    let eotVisit = study.schedule[eotVisitNum];
+                    const subjectEOTvisit = subjectsCopy[subjectId].visits[eotVisit.id];
+                    if (eotVisit.visitType === "end-of-treatment") {
+                        subjectsCopy[subjectId].visits[eotVisit.id].targetDate = selectedDate ? timeFunctions.addDays(selectedDate, eotVisit.daysFromLastCheckpoint) : "";
+                        subjectsCopy[subjectId].visits[eotVisit.id].windowStart = selectedDate ? timeFunctions.addDays(selectedDate, eotVisit.windowDaysFrom.min) : "";
+                        subjectsCopy[subjectId].visits[eotVisit.id].windowEnd = selectedDate ? timeFunctions.addDays(selectedDate, eotVisit.windowDaysFrom.max) : "";
+                        subjectsCopy[subjectId].visits[eotVisit.id].oow = selectedDate ? isOOW(subjectEOTvisit) : false;
+                    }
+                }
+            } else if (visitType === "end-of-treatment") {
+                // update all follow-up targets
+                const followUpVisitNums = study.visitTypes["follow-up"]
+                if (followUpVisitNums) {
+                    for (let i = 0; i < followUpVisitNums.length; i++) {
+                        let followUpVisit = study.schedule[followUpVisitNums[i]];
+                        const subjectFollowUpVisit = subjectsCopy[subjectId].visits[followUpVisit.id];
+                        if (followUpVisit.visitType === "follow-up") {
+                            // set subject visitNum target to selected date + study VisitNum daysFromLastCheckpoint
+                            subjectsCopy[subjectId].visits[followUpVisit.id].targetDate = selectedDate ? timeFunctions.addDays(selectedDate, followUpVisit.daysFromLastCheckpoint) : "";
+                            // set subject windowStart & windowEnd to selectedDate + windowDayFrom min & max
+                            subjectsCopy[subjectId].visits[followUpVisit.id].windowStart = selectedDate ? timeFunctions.addDays(selectedDate, followUpVisit.windowDaysFrom.min) : "";
+                            subjectsCopy[subjectId].visits[followUpVisit.id].windowEnd = selectedDate ? timeFunctions.addDays(selectedDate, followUpVisit.windowDaysFrom.max) : "";
+                            subjectsCopy[subjectId].visits[followUpVisit.id].oow = selectedDate ? isOOW(subjectFollowUpVisit) : false;
+                        }
+                    }
+                }
+            }
             setSubjects(subjectsCopy);
         },
-        updateVisitToMissed: function (id: string, subjectId: string, visitObj: StudyVisit) {
+        updateVisitToMissed: function (subjectId: string, visitObj: StudyVisit) {
             // confirmation modal
 
             // check visit Type
+            const visitType = visitObj.visitType;
             // if screening/baseline - reject action
-            if (visitObj.visitType === "screening" || visitObj.visitType === "baseline") {
+            if (visitType === "screening" || visitObj.visitType === "baseline") {
                 // alert - cannot Miss this type of visit
                 alert("Screening and Baseline visits cannot be missed")
             } else {
@@ -520,27 +666,89 @@ const SubjectsPage = ({ study }: SubjectsPageProps) => {
                 const subjectsCopy = { ...subjects };
                 subjectsCopy[subjectId].visits[visitNum].date = "";
                 subjectsCopy[subjectId].visits[visitNum].status = "missed";
+                subjectsCopy[subjectId].visits[visitNum].oow = false;
+                subjectsCopy[subjectId].visits[visitNum].icfSigned = false;
 
+                if (visitType === "end-of-treatment") {
+                    subjectFunctions.updateAffectedDates(subjectId, visitObj, "remove");
+                };
 
-                visitFunctions.closeVisitDropdown(id);
-                visitFunctions.closeVisitDatePicker(id);
                 setSubjects(subjectsCopy);
+                // missing run-in code
             }
         },
-        updateVisitToNotScheduled: function (id: string, subjectId: string, visitObj: StudyVisit) {
+        updateVisitToNotScheduled: function (subjectId: string, visitObj: StudyVisit) {
             // get subject visit
-            const subjectsCopy = { ...subjects};
+            const subjectsCopy = { ...subjects };
+            const visitNum = visitObj.id;
             // const thisSubjectVisit = subjectsCopy[subjectId].visits[visitObj.id];
             // reomve .date
-            subjectsCopy[subjectId].visits[visitObj.id].date = "";
+            subjectsCopy[subjectId].visits[visitNum].date = "";
             // update status to not scheduled
-            subjectsCopy[subjectId].visits[visitObj.id].status = "not scheduled";
-            
-            // separate this from the subject Function
-            visitFunctions.closeVisitDropdown(id);
+            subjectsCopy[subjectId].visits[visitNum].status = "not scheduled";
+            subjectsCopy[subjectId].visits[visitNum].oow = false;
+            subjectsCopy[subjectId].visits[visitNum].icfSigned = false; // needed?
 
-            // if pivotol visit, change affected visits to unscheduled if they are "completed" or "missed"
+            // if pivotol visit, change affected visits to unscheduled if they are "completed" or "missed"?
+            subjectFunctions.updateAffectedDates(subjectId, visitObj, "remove");
+
+            setSubjects(subjectsCopy);
+
         }
+    }
+    const studyFunctions = {
+        addSubject: function (subjectPrecursor: SubjectPrecursor) {
+            const subjectsCopy = { ...subjects };
+
+
+            let visits: { [key: string]: SubjectVisit } = {}
+            let unscheduledVisits: { [key: string]: SubjectUnscheduledVisit } = {}
+            let unscheduledAfterVisit: { [key: string]: string[] } = {}
+
+            // loop thru all study visits, and create the data structure instead
+            const visitNums = study.visitOrder;
+            for (let i = 0; i < visitNums.length; i++) {
+                visits[visitNums[i]] = {
+                    ...SubjectVisitEmpty,
+                    id: visitNums[i],
+                    title: study.schedule[visitNums[i]].title,
+                };
+                unscheduledAfterVisit[visitNums[i]] = [];
+            }
+            visits["visit-1"].date = subjectPrecursor.screeningDate;
+            visits["visit-1"].status = new Date(subjectPrecursor.screeningDate) > new Date() ? "scheduled" : "completed";
+            const baselineVisitNum = study.visitTypes.baseline[0];
+            const baselineVisit = study.schedule[baselineVisitNum];
+            if (baselineVisit.visitType !== "screening") {
+                visits[baselineVisitNum].targetDate = timeFunctions.addDays(subjectPrecursor.screeningDate, baselineVisit.daysFromLastCheckpoint);
+                visits[baselineVisitNum].windowStart = timeFunctions.addDays(subjectPrecursor.screeningDate, baselineVisit.windowDaysFrom.min);
+                visits[baselineVisitNum].windowEnd = timeFunctions.addDays(subjectPrecursor.screeningDate, baselineVisit.windowDaysFrom.max);
+            }
+            // missing run-in code
+
+            if (subjectPrecursor.enrollmentDate) {
+                visits[baselineVisitNum].date = subjectPrecursor.enrollmentDate;
+                visits[baselineVisitNum].status = new Date(subjectPrecursor.enrollmentDate) > new Date() ? "scheduled" : "completed";
+                // missing update affected treatement / eot visit targets
+            }
+            // add screening date
+            // add enrollment date and target date
+
+            const newSubject: PredictSubject = {
+                id: subjectPrecursor.id,
+                trailingId: subjectPrecursor.trailingId,
+                demographics: subjectPrecursor.demographics,
+                studyName: study.studyInfo.studyName,
+                status: subjectPrecursor.status,
+                comments: subjectPrecursor.comments,
+                visits: visits,
+                unscheduledVisits: unscheduledVisits,
+                unscheduledAfterVisit: unscheduledAfterVisit,
+            }
+
+            subjectsCopy[newSubject.id] = newSubject;
+            setSubjects(subjectsCopy);
+        },
     }
 
 
@@ -606,17 +814,23 @@ const SubjectsPage = ({ study }: SubjectsPageProps) => {
     useEffect(() => {
 
     }, [])
+    const printSubjects = () => {
+        console.log(subjects);
+    }
 
     const [addSubjectModalOpen, setAddSubjectModalOpen] = useState<boolean>(false);
 
     return (
         <>
-            <AddSubject open={addSubjectModalOpen} nextSubjectId={getNextSubjectId(subjects)} onClose={() => setAddSubjectModalOpen(false)} />
+            <AddSubject open={addSubjectModalOpen} nextSubjectId={getNextSubjectId(subjects)} addSubject={studyFunctions.addSubject} onClose={() => setAddSubjectModalOpen(false)} />
             <div className="subjects-page">
-                <div className="head">
+                <div onClick={() => printSubjects()} className="head">
                     <div className="row">
                         <div className="search-barDiv" style={{ width: 240 }}>
-                            <input type="text" className="search-bar" placeholder='Search subject' />
+                            <input
+                                type="text" className="search-bar"
+                                onChange={(e: any) => setSearchText(e.target.value)}
+                                placeholder='Search subject' />
                             <div className="left-icon gray-text">
                                 <span className="material-symbols-outlined">
                                     search
@@ -625,12 +839,12 @@ const SubjectsPage = ({ study }: SubjectsPageProps) => {
                         </div>
                         <div className="filter-dropdownDiv">
                             <div ref={filterDropdownRef} onClick={() => setFilterDropdownOpen(filterDropdownOpen => !filterDropdownOpen)} className="filter-dropdown">
-                                <p>Filter</p>
+                                <p className='smedium'>Filter</p>
                                 <div className="material-symbols-outlined">arrow_drop_down</div>
                                 <p className='gray-text smedium'>{filterValue}</p>
                             </div>
                             <div ref={filterDropdownSelectorRef} className={`dropdown-selector ${filterDropdownOpen ? "shown" : "hidden"}`}>
-                                <div onClick={(e: any) => updateFilterValue(e.target.innerText)} className="option">None</div>
+                                <div onClick={(e: any) => updateFilterValue(e.target.innerText)} className="option">All</div>
                                 <div onClick={(e: any) => updateFilterValue(e.target.innerText)} className="option">Screening</div>
                                 <div onClick={(e: any) => updateFilterValue(e.target.innerText)} className="option">Randomized</div>
                                 <div onClick={(e: any) => updateFilterValue(e.target.innerText)} className="option">Completed</div>
@@ -688,7 +902,9 @@ const SubjectsPage = ({ study }: SubjectsPageProps) => {
                                 </div>
 
                                 {Object.values(subjects).map((subject, index) => {
-                                    return <div key={index} className="row">
+                                    const searchIDFilter = searchText ? subject.id.includes(searchText) : true;
+                                    const searchInitialsFilter = searchText ? subject.demographics.initials.includes(searchText.toUpperCase()) : true;
+                                    return (searchIDFilter || searchInitialsFilter) && <div key={index} className="row">
                                         <div className="col-options material-symbols-outlined">more_vert</div>
                                         <p className="col">{subject.id}</p>
                                         <p className="col">{subject.demographics.initials}</p>
@@ -700,24 +916,58 @@ const SubjectsPage = ({ study }: SubjectsPageProps) => {
                                             const studyVisit = study.schedule[visitNum];
 
                                             return <div key={index} className="col">
-                                                <div className="fill-div">
-                                                    <div className="dateBox">
-                                                        <p onClick={() => visitFunctions.toggleVisitDatePicker(id)} className={`smedium pointer ${subjectVisit.status === "not scheduled" && "lightgray-text"} ${subjectVisit.status === "scheduled" && "blue-text"} ${subjectVisit.status === "missed" && "red-text"} ${subjectVisit.oow && "red-underlined"}`}>{subjectVisit.status !== "missed" ? subjectVisit.date ? timeFunctions.datify(subjectVisit.date) : subjectVisit.targetDate ? timeFunctions.datify(subjectVisit.targetDate) : "Error" : "Missed"}</p>
-                                                        <div className="visit-level-icon">
-                                                            <span className={`material-symbols-outlined ${subjectVisit.status === "scheduled" && "blue-text"} ${subjectVisit.icfSigned && "gray-text"}`}>{subjectVisit.status === "completed" && subjectVisit.icfSigned && "description"}{subjectVisit.status === "scheduled" && "schedule"}</span>
+
+                                                <div className="dateBox">
+                                                    <div className="tooltip">
+                                                        <div className="detail">
+                                                            <p className="key bold600">Window:</p>
+                                                            {subjectVisit.windowStart && subjectVisit.windowEnd ?
+                                                                <p className="value">{timeFunctions.datify(subjectVisit.windowStart)} - {timeFunctions.datify(subjectVisit.windowEnd)}</p>
+                                                                :
+                                                                <p className="value mediumgray-text">None</p>
+                                                            }
+                                                        </div>
+                                                        <div className="detail">
+                                                            <p className="key bold600">Status:</p>
+                                                            <p className={`value ${subjectVisit.status === "completed" && "green-text"} ${subjectVisit.status === "scheduled" && "blue-text"} ${subjectVisit.status === "missed" && "red-text"} ${subjectVisit.status === "not scheduled" && "mediumgray-text"}`}>
+                                                                {textFunctions.titalize(subjectVisit.status)}
+                                                            </p>
                                                         </div>
                                                     </div>
+                                                    <p onClick={() => visitFunctions.toggleVisitDatePicker(id)} className={`theSelectedVisitDate smedium pointer ${subjectVisit.status === "not scheduled" && "lightgray-text"} ${subjectVisit.status === "scheduled" && "blue-text"} ${subjectVisit.status === "missed" && "red-text"} ${subjectVisit.oow && "red-underlined"}`}>
+                                                        {subjectVisit.status !== "missed" ? subjectVisit.date ? timeFunctions.datify(subjectVisit.date) : subjectVisit.targetDate ? timeFunctions.datify(subjectVisit.targetDate) : "X" : "Missed"}
+                                                    </p>
+                                                    <div className="visit-level-icon">
+                                                        <span className={`material-symbols-outlined ${subjectVisit.status === "scheduled" && "blue-text"} ${subjectVisit.icfSigned && "gray-text"}`}>{subjectVisit.status === "completed" && subjectVisit.icfSigned && "description"}{subjectVisit.status === "scheduled" && "schedule"}</span>
+                                                    </div>
+                                                </div>
+                                                <div className="icon-tray-container">
+
                                                     <div className="icon-tray">
                                                         {studyVisit.visitType !== "screening" &&
-                                                            <span onClick={() => subjectFunctions.updateVisitToNotScheduled(id, subject.id, studyVisit)} className={`material-symbols-outlined yellow-icon ${subjectVisit.status === "not scheduled" && "selected"}`}>calendar_add_on</span>
+                                                            <span onClick={() => { subjectFunctions.updateVisitToNotScheduled(subject.id, studyVisit); visitFunctions.closeVisitDropdown(id) }} className={`material-symbols-outlined yellow-icon ${subjectVisit.status === "not scheduled" && "selected"}`}>calendar_add_on</span>
                                                         }
-                                                        <span onClick={() => { visitFunctions.openVisitDatePicker(id); updateDatePickerStatus(id, "scheduled") }} className={`material-symbols-outlined blue-icon ${subjectVisit.status === "scheduled" && "selected"}`}>event</span>
-                                                        <span onClick={() => { visitFunctions.openVisitDatePicker(id); updateDatePickerStatus(id, "completed") }} className={`material-symbols-outlined green-icon ${subjectVisit.status === "completed" && "selected"}`}>check_circle</span>
+                                                        {subjectVisit.status === "not scheduled" || subjectVisit.status === "missed" ?
+                                                            <>
+                                                                <span onClick={() => { visitFunctions.openVisitDatePicker(id); updateDatePickerStatus(id, "scheduled") }} className={`material-symbols-outlined blue-icon`}>event</span>
+                                                                <span onClick={() => { visitFunctions.openVisitDatePicker(id); updateDatePickerStatus(id, "completed") }} className={`material-symbols-outlined green-icon`}>check_circle</span>
+                                                            </>
+                                                            :
+                                                            <>
+                                                                <span onClick={() => { subjectFunctions.updateVisitStatus(subject.id, studyVisit, "scheduled") }} className={`material-symbols-outlined blue-icon ${subjectVisit.status === "scheduled" && "selected"}`}>event</span>
+                                                                <span onClick={() => { subjectFunctions.updateVisitStatus(subject.id, studyVisit, "completed") }} className={`material-symbols-outlined green-icon ${subjectVisit.status === "completed" && "selected"}`}>check_circle</span>
+                                                            </>
+                                                        }
                                                         {studyVisit.visitType !== "screening" && studyVisit.visitType !== "baseline" &&
-                                                            <span onClick={() => subjectFunctions.updateVisitToMissed(id, subject.id, studyVisit)} className={`material-symbols-outlined red-icon ${subjectVisit.status === "missed" && "selected"}`}>event_busy</span>
+                                                            <span
+                                                                onClick={() => { subjectFunctions.updateVisitToMissed(subject.id, studyVisit); visitFunctions.closeVisitDropdown(id); visitFunctions.closeVisitDatePicker(id); }}
+                                                                className={`material-symbols-outlined red-icon ${subjectVisit.status === "missed" && "selected"}`}>
+                                                                event_busy
+                                                            </span>
                                                         }
                                                     </div>
                                                 </div>
+
 
                                                 <div onClick={() => visitFunctions.toggleVisitOptions(id)} id={`visit-optionsBtn-${id}`} className="options-btn">
                                                     <span className="material-symbols-outlined">more_vert</span>
@@ -730,10 +980,10 @@ const SubjectsPage = ({ study }: SubjectsPageProps) => {
                                                             <span className="material-symbols-outlined large">description</span>
                                                             <p>{subjectVisit.icfSigned ? "Remove" : "Add"} ICF signed</p>
                                                         </div>
-                                                        <div onClick={() => {visitFunctions.openVisitDatePicker(id)}} className="option">
+                                                        {/* <div onClick={() => { visitFunctions.openVisitDatePicker(id) }} className="option">
                                                             <span className="material-symbols-outlined large">workspaces</span>
                                                             <p>Change status</p>
-                                                        </div>
+                                                        </div> */}
                                                         <div className="option">
                                                             <span className="material-symbols-outlined large">chat</span>
                                                             <p>Add comment</p>
@@ -752,7 +1002,9 @@ const SubjectsPage = ({ study }: SubjectsPageProps) => {
                                                             <span className="material-symbols-outlined">close</span>
                                                         </div>
                                                         <div id={`visit-dropdown-${id}`} className="visit-status-dropdown hidden">
-                                                            <div className="option underlined">
+                                                            <div
+                                                                onClick={() => { subjectFunctions.updateVisitToNotScheduled(subject.id, studyVisit); visitFunctions.closeVisitDropdown(id); visitFunctions.closeVisitDatePicker(id); }}
+                                                                className="option underlined">
                                                                 <span className="material-symbols-outlined">calendar_add_on</span>
                                                                 <p>Not Scheduled</p>
                                                             </div>
@@ -764,24 +1016,61 @@ const SubjectsPage = ({ study }: SubjectsPageProps) => {
                                                                 <span className="material-symbols-outlined">check_circle</span>
                                                                 <p>Completed</p>
                                                             </div>
-                                                            <div onClick={() => subjectFunctions.updateVisitToMissed(id, subject.id, studyVisit)} className="option red-text">
+                                                            <div
+                                                                onClick={() => { subjectFunctions.updateVisitToMissed(subject.id, studyVisit); visitFunctions.closeVisitDropdown(id); visitFunctions.closeVisitDatePicker(id); }}
+                                                                className="option red-text">
                                                                 <span className="material-symbols-outlined">event_busy</span>
                                                                 <p>Missed</p>
                                                             </div>
                                                         </div>
                                                     </div>
                                                     <ReactDatePicker
-                                                        selected={new Date(subjectVisit.date ? subjectVisit.date : subjectVisit.targetDate ?? new Date())}
+                                                        selected={new Date(subjectVisit.date ? subjectVisit.date : subjectVisit.targetDate ? subjectVisit.targetDate : new Date())}
                                                         onChange={(date: Date) => subjectFunctions.updateVisitDate(subject.id, studyVisit, date)}
                                                         inline />
                                                 </div>
 
                                             </div>
                                         })}
-                                        {Object.values(study.unscheduled).map((visit, index) => {
+                                        {Object.values(study.unscheduled).map((unschedVisit, index) => {
+                                            const id = subject.id + "-" + unschedVisit.id
                                             // need to remove visit.id in key
-                                            return <div key={visit.id+index} className="col">
-                                                <span className="material-symbols-outlined pointer visit-addBtn">add_circle</span>
+                                            return <div key={unschedVisit.id + index} className="col">
+                                                <span onClick={() => visitFunctions.toggleVisitDatePicker(id)} className="material-symbols-outlined pointer visit-addBtn">add_circle</span>
+                                                <div id={`visit-datepicker-${id}`} className="visit-datepicker hidden">
+                                                    <div className="header">
+                                                        <div onClick={() => visitFunctions.toggleVisitDropdown(id)} id={`visit-dropper-${id}`} className="visit-status-dropper">
+                                                            <span className="material-symbols-outlined">event</span>
+                                                            {/* <p>{visitDatePickerStatus}</p> */}
+                                                            <p>{visitDatePickerStatus ? textFunctions.titalize(visitDatePickerStatus) : "Scheduled"}</p>
+                                                            <span className="material-symbols-outlined position-right">arrow_drop_down</span>
+                                                        </div>
+                                                        <div onClick={() => visitFunctions.closeVisitDatePicker(id)} className="circle-closeBtn">
+                                                            <span className="material-symbols-outlined">close</span>
+                                                        </div>
+                                                        <div id={`visit-dropdown-${id}`} className="visit-status-dropdown hidden">
+
+                                                            <div onClick={() => updateDatePickerStatus(id, "scheduled")} className="option">
+                                                                <span className="material-symbols-outlined">event</span>
+                                                                <p>Scheduled</p>
+                                                            </div>
+                                                            <div onClick={() => updateDatePickerStatus(id, "completed")} className="option">
+                                                                <span className="material-symbols-outlined">check_circle</span>
+                                                                <p>Completed</p>
+                                                            </div>
+                                                            <div
+                                                                onClick={() => { visitFunctions.closeVisitDropdown(id); visitFunctions.closeVisitDatePicker(id); }}
+                                                                className="option red-text">
+                                                                <span className="material-symbols-outlined">close</span>
+                                                                <p>Cancel</p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <ReactDatePicker
+                                                        selected={new Date()}
+                                                        onChange={(date: Date) => subjectFunctions.addUnscheduledVisit(subject.id, unschedVisit, date)}
+                                                        inline />
+                                                </div>
                                             </div>
                                         })}
                                     </div>

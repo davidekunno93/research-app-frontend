@@ -107,7 +107,7 @@ export type Study = {
         "end-of-study": string[]
     }
     unscheduled: {
-        [key: number]: StudyUnscheduledVisit
+        [key: string]: StudyUnscheduledVisit
     }
 }
 // type VisitType = "screening" | "run-in" | "baseline" | "treatment" | "end-of-treatment" | "follow-up" | "end-of-study";
@@ -132,11 +132,39 @@ export type SubjectVisit = {
         [key: number]: Comment
     }
 }
+export const SubjectVisitEmpty: SubjectVisit = {
+    id: "",
+    title: "",
+    date: "",
+    targetDate: "",
+    windowStart: "",
+    windowEnd: "",
+    icfSigned: false,
+    oow: false,
+    status: "not scheduled",
+    comments: {
+        1: {
+            comment: "",
+            timeStamp: "",
+            byUser: "",
+        }
+    }
+}
+export type Visits = {
+    [key: string]: SubjectVisit
+}
+export type UnscheduledVisits = {
+    [key: string]: SubjectUnscheduledVisit
+}
+export type UnscheduledAfterVisit = {
+    [key: string]: string[]
+}
 export type SubjectUnscheduledVisit = {
+    id: string
     title: string
     date: string
-    targetDate: string
-    status: "not scheduled" | "scheduled" | "completed" | "missed"
+    visitType: string
+    status: "scheduled" | "completed"
     comments: {
         [key: number]: Comment
     }
@@ -145,6 +173,19 @@ export type Comment = {
     comment: string
     timeStamp: string
     byUser: string
+}
+export type EntrollmentStatuses = "screening" | "randomized" | "completed" | "discontinued";
+export type SubjectPrecursor = {
+    id: string
+    trailingId: string
+    demographics: Demographics
+    studyName: string
+    status: "screening" | "randomized" | "completed" | "discontinued"
+    comments: {
+        [key: number]: Comment
+    }
+    screeningDate: string
+    enrollmentDate: string
 }
 export type Subject = {
     id: string
@@ -159,18 +200,20 @@ export type Subject = {
         [key: number]: Comment
     }
 }
+// type PredictVisits = "visit-1" | "visit-2" | "visit-3";
 export interface PredictSubject extends Subject {
     visits: {
-        // unselected date - target date calculated by FE in gray, 
-        // selected date - scheduled
-        // selected date - completed
         // "visit-1": SubjectVisit
         // "visit-2": SubjectVisit
         // "visit-3": SubjectVisit
+        // [key in PredictVisits]: SubjectVisit
         [key: string]: SubjectVisit
     },
     unscheduledVisits: {
         [key: string]: SubjectUnscheduledVisit
+    },
+    unscheduledAfterVisit: {
+        [key: string]: string[]
     }
 }
 export type SubjectsState = {

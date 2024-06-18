@@ -125,14 +125,14 @@ function App() {
       "end-of-study" : [],
     },
     unscheduled: {
-      1: {
-        id: "1",
+      "unsched-1": {
+        id: "unsched-1",
         title: "UNSCHED",
         desc: "Change in Treatment",
         visitType: "unscheduled",
       },
-      2: {
-        id: "2",
+      "unsched-2": {
+        id: "unsched-2",
         title: "UNSCHED",
         desc: "Blood Re-draw",
         visitType: "re-draw",

@@ -3,12 +3,13 @@
     flex-direction: column;
     padding: 24px;
 }
-.head > .row {
+
+.head>.row {
     display: flex;
     flex-direction: row;
     align-items: center;
     gap: 24px;
-}   
+}
 
 .filter-dropdownDiv {
     position: relative;
@@ -52,6 +53,10 @@
     cursor: pointer;
 }
 
+.filter-dropdownDiv>.dropdown-selector>.option {
+    font-size: 14px;
+}
+
 .filter-dropdownDiv>.dropdown-selector>.option:hover {
     color: black;
     background-color: rgb(240, 240, 240);
@@ -66,16 +71,19 @@
     margin-top: 12px;
     color: #242424;
 }
+
 .icon-key {
     display: flex;
     gap: 4px;
 }
-.icon-key > span {
+
+.icon-key>span {
     font-size: medium;
 }
-.icon-key > p {
+
+.icon-key>p {
     font-size: 12px;
-}  
+}
 
 
 
@@ -85,7 +93,7 @@
     background-color: white;
     border: 1px solid gainsboro;
     /* background-color: beige; */
-    border-radius: 12px;
+    border-radius: 8px;
     /* width: 96%; */
     width: calc(100% - 48px);
     box-sizing: border-box;
@@ -130,14 +138,14 @@
     /* overflow: hidden; */
 }
 
-.col > .fill-div {
+.col>.fill-div {
     width: 100%;
     height: 100%;
     display: grid;
     align-items: center;
     justify-content: center;
     position: relative;
-    overflow: hidden;
+    /* overflow: hidden; */
 }
 
 .dateBox {
@@ -150,8 +158,19 @@
     right: -8px;
     position: absolute;
 }
-.visit-level-icon > span {
+
+.visit-level-icon>span {
     font-size: medium;
+}
+.col .icon-tray-container {
+    position: absolute;
+    bottom: 0;
+    /* background-color: beige; */
+    height: 16px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    overflow: hidden;
 }
 
 .col .icon-tray {
@@ -177,6 +196,8 @@
     transform: translateY(0px);
 }
 
+
+
 .icon-tray>span {
     font-size: 9px;
     color: rgba(0, 0, 0, 0.2);
@@ -190,15 +211,19 @@
     transition: 0.2s;
     color: rgba(0, 0, 0, 0.5);
 }
+
 .icon-tray>.green-icon.selected {
     color: rgb(0, 200, 0);
 }
+
 .icon-tray>.red-icon.selected {
     color: rgb(255, 0, 0);
 }
+
 .icon-tray>.blue-icon.selected {
     color: rgb(0, 0, 255);
 }
+
 .icon-tray>.yellow-icon.selected {
     color: rgb(255, 230, 0);
 }
@@ -225,7 +250,7 @@
 .options-btn>span {
     cursor: pointer;
     font-size: 14px;
-    color: rgba(0, 0, 0, 0.2);
+    color: rgba(0, 0, 0, 0.5);
     border: 1px solid transparent;
     display: flex;
     justify-content: center;
@@ -261,15 +286,18 @@
     flex-direction: column;
     transition: 0.2s;
 }
+
 .col .dropdown.hidden {
     opacity: 0;
     visibility: hidden;
 }
+
 .col .dropdown.shown {
     opacity: 1;
     visibility: visible;
 }
-.col .dropdown > .option {
+
+.col .dropdown>.option {
     display: flex;
     align-items: center;
     gap: 6px;
@@ -277,11 +305,13 @@
     cursor: pointer;
     transition: 0.2s;
 }
-.col .dropdown > .option:hover {
+
+.col .dropdown>.option:hover {
     background-color: rgba(240, 240, 240, 0.8);
     transition: 0.2s;
 }
-.col .dropdown > .option.disabled {
+
+.col .dropdown>.option.disabled {
     pointer-events: none;
     color: gainsboro;
 }
@@ -314,21 +344,24 @@
 }
 
 .visit-datepicker {
-    position: fixed;
+    position: absolute;
     transform: translateY(164px);
     transition: 0.2s;
     z-index: 1;
 }
+
 .visit-datepicker.hidden {
     opacity: 0;
     visibility: hidden;
     transform: translateY(150px);
 }
+
 .visit-datepicker.shown {
     opacity: 1;
     visibility: visible;
 }
-.visit-datepicker > .header {
+
+.visit-datepicker>.header {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
@@ -336,7 +369,8 @@
     margin-bottom: 4px;
     position: relative;
 }
-.visit-datepicker > .header > .visit-status-dropper {
+
+.visit-datepicker>.header>.visit-status-dropper {
     background-color: rgb(240, 240, 240);
     border: 1px solid gainsboro;
     height: 24px;
@@ -350,13 +384,16 @@
     gap: 6px;
     cursor: pointer;
 }
-.visit-datepicker > .header > .visit-status-dropper span {
+
+.visit-datepicker>.header>.visit-status-dropper span {
     font-size: medium;
 }
-.visit-datepicker > .header > .visit-status-dropper p {
+
+.visit-datepicker>.header>.visit-status-dropper p {
     font-size: 12px
 }
-.visit-datepicker > .header > .visit-status-dropdown {
+
+.visit-datepicker>.header>.visit-status-dropdown {
     position: absolute;
     width: 160px;
     display: flex;
@@ -368,17 +405,20 @@
     top: calc(100% + 4px);
     z-index: 2;
 }
-.visit-datepicker > .header > .visit-status-dropdown.hidden {
+
+.visit-datepicker>.header>.visit-status-dropdown.hidden {
     opacity: 0;
     visibility: hidden;
     transition: 0.2s;
 }
-.visit-datepicker > .header > .visit-status-dropdown.shown {
+
+.visit-datepicker>.header>.visit-status-dropdown.shown {
     opacity: 1;
     visibility: visible;
     transition: 0.2s;
 }
-.visit-status-dropdown > .option {
+
+.visit-status-dropdown>.option {
     display: flex;
     flex-direction: row;
     gap: 6px;
@@ -387,7 +427,8 @@
     cursor: pointer;
     transition: 0.2s;
 }
-.visit-status-dropdown > .option.underlined {
+
+.visit-status-dropdown>.option.underlined {
     display: flex;
     flex-direction: row;
     gap: 6px;
@@ -397,6 +438,7 @@
     transition: 0.2s;
     position: relative;
 }
+
 .option.underlined::after {
     content: "";
     position: absolute;
@@ -407,14 +449,17 @@
     height: 1px;
     background-color: gainsboro;
 }
-.visit-status-dropdown > .option:hover {
+
+.visit-status-dropdown>.option:hover {
     background-color: rgb(220, 220, 220);
     transition: 0.2s;
 }
-.visit-status-dropdown > .option p {
+
+.visit-status-dropdown>.option p {
     font-size: 12px;
 }
-.visit-status-dropdown > .option span {
+
+.visit-status-dropdown>.option span {
     font-size: medium;
 }
 
@@ -422,10 +467,12 @@
     display: flex;
     align-items: center;
 }
-.visit-datepicker .circle-closeBtn span{
+
+.visit-datepicker .circle-closeBtn span {
     font-size: large;
     cursor: pointer;
 }
+
 .circle-closeBtn {
     border-radius: 50%;
     display: flex;
@@ -435,14 +482,64 @@
     transition: 0.2s;
     cursor: pointer;
 }
+
 .circle-closeBtn:hover {
     background-color: rgba(0, 0, 0, 0.07);
     transition: 0.2s;
 }
+
 .visit-addBtn {
     transition: 0.2s;
 }
+
 .visit-addBtn:hover {
     transform: translateY(-3px);
     transition: 0.2s;
+}
+
+.dateBox>.tooltip {
+    position: absolute;
+    bottom: 135%;
+    left: 50%;
+    transform: translateX(-50%);
+    color: white;
+    width: min-content;
+    background-color: #2f3a4c;
+    /* border: 1px solid salmon; */
+    border-radius: 4px;
+    display: flex;
+    flex-direction: column;
+    padding: 6px 8px;
+    visibility: hidden;
+    opacity: 0;
+    transition-duration: 0.2s;
+}
+.dateBox:hover .tooltip {
+    visibility: visible;
+    opacity: 1;
+    transition-delay: 1.5s;
+}
+
+.dateBox>.tooltip::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+    border-top: 8px solid #2f3a4c;
+}
+.tooltip > .detail {
+    display: flex;
+    flex-direction: row;
+    gap: 4px;
+}
+.tooltip > .detail p {
+    font-size: 12px;
+}
+.value {
+    white-space: nowrap;
 }

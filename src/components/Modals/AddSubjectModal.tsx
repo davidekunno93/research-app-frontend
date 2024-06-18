@@ -3,7 +3,7 @@ import "./modals.css"
 import { Fade } from 'react-awesome-reveal'
 import "react-datepicker/dist/react-datepicker.css";
 import ReactDatePicker from 'react-datepicker'
-import { Comment, Demographics } from '../../TypeFile';
+import { EntrollmentStatuses, SubjectPrecursor } from '../../TypeFile';
 
 type AddSubjectModalProps = {
     open: boolean
@@ -11,27 +11,18 @@ type AddSubjectModalProps = {
         subjectId: string
         trailingId: string
     }
+    addSubject: (subjectPrecursor: SubjectPrecursor) => void
     onClose: Function
 };
 
-const AddSubjectModal = ({ open, nextSubjectId, onClose }: AddSubjectModalProps) => {
+const AddSubjectModal = ({ open, nextSubjectId, addSubject, onClose }: AddSubjectModalProps) => {
     if (!open) return null;
     // [onload]
 
     // [elements]
-    type SubjectPrecursor = {
-        id: string
-        demographics: Demographics
-        studyName: string
-        status: string
-        comments: {
-            [key: number]: Comment
-        }
-        screeningDate: string
-        enrollmentDate: string
-    }
-    const [newSubject, setNewSubject] = useState<SubjectPrecursor>({
-        id: "",
+    const [newSubjectPrecursor, setNewSubjectPrecursor] = useState<SubjectPrecursor>({
+        id: nextSubjectId.subjectId,
+        trailingId: nextSubjectId.trailingId,
         demographics: {
             initials: "",
             birthYear: 0,
@@ -39,7 +30,7 @@ const AddSubjectModal = ({ open, nextSubjectId, onClose }: AddSubjectModalProps)
             gender: "",
         },
         studyName: "",
-        status: "Not Screened",
+        status: "screening",
         comments: {
             1: {
                 comment: "",
@@ -68,12 +59,12 @@ const AddSubjectModal = ({ open, nextSubjectId, onClose }: AddSubjectModalProps)
     const enrollmentRef = useRef<HTMLInputElement>(null);
     const enrollmentDropdownRef = useRef<HTMLInputElement>(null);
     const [enrollmentDropdownOpen, setEnrollmentDropdownOpen] = useState<boolean>(false);
-    const [enrollmentStatus, setEnrollmentStatus] = useState<string>("Not Screened");
+    const [enrollmentStatus, setEnrollmentStatus] = useState<EntrollmentStatuses >("screening");
     useEffect(() => {
-        if (enrollmentStatus === "Not Screened") {
-            const newSubjectCopy = { ...newSubject };
+        if (enrollmentStatus === "screening") {
+            const newSubjectCopy = { ...newSubjectPrecursor };
             newSubjectCopy.enrollmentDate = "";
-            setNewSubject(newSubjectCopy);
+            setNewSubjectPrecursor(newSubjectCopy);
         }
     }, [enrollmentStatus])
 
@@ -88,23 +79,23 @@ const AddSubjectModal = ({ open, nextSubjectId, onClose }: AddSubjectModalProps)
 
     const [intitialsValid, setInitialsValid] = useState<boolean>(false);
     useEffect(() => {
-        let initials = newSubject.demographics.initials;
+        let initials = newSubjectPrecursor.demographics.initials;
         if (initials.length > 3 || initials.length < 2) {
             setInitialsValid(false);
         } else {
             setInitialsValid(true);
         }
-    }, [newSubject.demographics.initials])
+    }, [newSubjectPrecursor.demographics.initials])
 
     const [ageVerified, setAgeVerified] = useState<boolean>(false);
     useEffect(() => {
-        const birthYear = newSubject.demographics.birthYear;
+        const birthYear = newSubjectPrecursor.demographics.birthYear;
         if (2024 - birthYear < 18 || 2024 - birthYear > 122) {
             setAgeVerified(false);
         } else {
             setAgeVerified(true);
         }
-    }, [newSubject.demographics.birthYear])
+    }, [newSubjectPrecursor.demographics.birthYear])
 
     useEffect(() => {
         document.addEventListener('click', hideOnClickOutside, true);
@@ -127,30 +118,30 @@ const AddSubjectModal = ({ open, nextSubjectId, onClose }: AddSubjectModalProps)
 
     const subjectFuntions = {
         updateBirthYear: function (birthYear: string) {
-            const newSubjectCopy = { ...newSubject };
+            const newSubjectCopy = { ...newSubjectPrecursor };
             newSubjectCopy.demographics.birthYear = parseInt(birthYear);
-            setNewSubject(newSubjectCopy);
+            setNewSubjectPrecursor(newSubjectCopy);
         },
         updateComments: function (comment: string) {
-            const newSubjectCopy = { ...newSubject };
+            const newSubjectCopy = { ...newSubjectPrecursor };
             newSubjectCopy.comments[1].comment = comment.trim();
-            setNewSubject(newSubjectCopy);
+            setNewSubjectPrecursor(newSubjectCopy);
         },
         updateEnrollDate: function (newEnrollDate: string) {
-            const newSubjectCopy = { ...newSubject };
+            const newSubjectCopy = { ...newSubjectPrecursor };
             newSubjectCopy.enrollmentDate = newEnrollDate;
-            setNewSubject(newSubjectCopy);
+            setNewSubjectPrecursor(newSubjectCopy);
         },
-        updateEnrollmentStatus: function (newStatus: string) {
+        updateEnrollmentStatus: function (newStatus: EntrollmentStatuses) {
             // change options in enrollment section - update enrollment status state
             setEnrollmentStatus(newStatus);
             // close dropdown
             setEnrollmentDropdownOpen(false);
 
             // update new subject status 
-            const newSubjectCopy = { ...newSubject };
+            const newSubjectCopy = { ...newSubjectPrecursor };
             newSubjectCopy.status = newStatus;
-            setNewSubject(newSubjectCopy);
+            setNewSubjectPrecursor(newSubjectCopy);
         },
         updateGender: function (gender: string) {
             if (genderInputRef.current) {
@@ -158,14 +149,14 @@ const AddSubjectModal = ({ open, nextSubjectId, onClose }: AddSubjectModalProps)
             }
             setGenderDropdownOpen(false);
 
-            const newSubjectCopy = { ...newSubject };
+            const newSubjectCopy = { ...newSubjectPrecursor };
             newSubjectCopy.demographics.gender = gender;
-            setNewSubject(newSubjectCopy);
+            setNewSubjectPrecursor(newSubjectCopy);
         },
         updateInitials: function (initials: string) {
-            const newSubjectCopy = { ...newSubject };
+            const newSubjectCopy = { ...newSubjectPrecursor };
             newSubjectCopy.demographics.initials = initials.toUpperCase();
-            setNewSubject(newSubjectCopy);
+            setNewSubjectPrecursor(newSubjectCopy);
         },
         updateLanguage: function (language: string) {
             if (languageInputRef.current) {
@@ -173,14 +164,14 @@ const AddSubjectModal = ({ open, nextSubjectId, onClose }: AddSubjectModalProps)
             }
             setLanguageDropdownOpen(false);
 
-            const newSubjectCopy = { ...newSubject };
+            const newSubjectCopy = { ...newSubjectPrecursor };
             newSubjectCopy.demographics.language = language;
-            setNewSubject(newSubjectCopy);
+            setNewSubjectPrecursor(newSubjectCopy);
         },
         updateScreenDate: function (newScreenDate: string) {
-            const newSubjectCopy = { ...newSubject };
+            const newSubjectCopy = { ...newSubjectPrecursor };
             newSubjectCopy.screeningDate = newScreenDate;
-            setNewSubject(newSubjectCopy);
+            setNewSubjectPrecursor(newSubjectCopy);
         },
     };
 
@@ -213,15 +204,15 @@ const AddSubjectModal = ({ open, nextSubjectId, onClose }: AddSubjectModalProps)
         }
     }
     const isNewSubjectValid = (): boolean => {
-        if (newSubject.demographics.initials && newSubject.demographics.gender && newSubject.demographics.birthYear && newSubject.demographics.language && ageVerified && intitialsValid) {
-            if (newSubject.status === "Screened") {
-                if (newSubject.screeningDate) {
+        if (newSubjectPrecursor.demographics.initials && newSubjectPrecursor.demographics.gender && newSubjectPrecursor.demographics.birthYear && newSubjectPrecursor.demographics.language && ageVerified && intitialsValid) {
+            if (newSubjectPrecursor.status === "screening") {
+                if (newSubjectPrecursor.screeningDate) {
                     return true;
                 } else {
                     return false;
                 }
-            } else if (newSubject.status === "Randomized") {
-                if (newSubject.screeningDate && newSubject.enrollmentDate) {
+            } else if (newSubjectPrecursor.status === "randomized") {
+                if (newSubjectPrecursor.screeningDate && newSubjectPrecursor.enrollmentDate) {
                     // check if enrollment date is after screening date
                     return true;
                 } else {
@@ -236,12 +227,12 @@ const AddSubjectModal = ({ open, nextSubjectId, onClose }: AddSubjectModalProps)
 
     }
 
-    const addSubject = () => {
+    const addSubjectInitiation = () => {
         if (isNewSubjectValid()) {
-            if (newSubject.status === "Randomized") {
+            if (newSubjectPrecursor.status === "randomized") {
                 // isNewSubjectValid has confirmed both screen and enroll dates have been entered
                 // check if enrollment date is after screening date
-                if (dateIsAfter(newSubject.screeningDate, newSubject.enrollmentDate)) {
+                if (dateIsAfter(newSubjectPrecursor.screeningDate, newSubjectPrecursor.enrollmentDate)) {
                     // add randomized subject
                 } else {
                     alert("Enrollment needs to be performed after screening");
@@ -249,6 +240,8 @@ const AddSubjectModal = ({ open, nextSubjectId, onClose }: AddSubjectModalProps)
 
             } else {
                 // add non-randomized subject
+                addSubject(newSubjectPrecursor);
+                onClose();
             }
         } else {
             alert("Please complete all required items before adding the subject");
@@ -262,7 +255,7 @@ const AddSubjectModal = ({ open, nextSubjectId, onClose }: AddSubjectModalProps)
     }, [])
 
     const printSubject = () => {
-        console.log(newSubject);
+        console.log(newSubjectPrecursor);
     };
     const timeFunctions = {
         datinormal: function (systemDate: any, dateOrTime?: "date" | "time" | "dateAndTime" | null) {
@@ -399,7 +392,19 @@ const AddSubjectModal = ({ open, nextSubjectId, onClose }: AddSubjectModalProps)
             date = timeFunctions.dayToDate(yearDay);
             return date;
         },
-    }
+    };
+    const textFunctions = {
+        capitalize: function (str: string): string {
+            return str.charAt(0).toUpperCase() + str.slice(1);
+        },
+        titalize: function (str: string): string {
+            const words = str.split(" ")
+            for (let i = 0; i < words.length; i++) {
+                words[i] = textFunctions.capitalize(words[i]);
+            }
+            return words.join(" ");
+        }
+    };
 
     
     useEffect(() => {
@@ -470,16 +475,16 @@ const AddSubjectModal = ({ open, nextSubjectId, onClose }: AddSubjectModalProps)
                                     <div className="enrollment-select">
                                         <div ref={enrollmentRef} onClick={() => setEnrollmentDropdownOpen(enrollmentDropdownOpen => !enrollmentDropdownOpen)} className="dropper">
                                             <span className="material-symbols-outlined" style={{ fontSize: "19.5px" }}>arrow_drop_down</span>
-                                            <p className='smaller aligns-c gray-text'>{enrollmentStatus}</p>
+                                            <p className='smaller aligns-c gray-text'>{textFunctions.titalize(enrollmentStatus)}</p>
                                         </div>
                                         <div ref={enrollmentDropdownRef} className={`dropdown ${!enrollmentDropdownOpen && "hidden"}`}>
-                                            <div onClick={(e: any) => { subjectFuntions.updateEnrollmentStatus(e.target.innerText); setEnrollmentDropdownOpen(false) }} className="option">
-                                                <p>Not Screened</p>
+                                            <div onClick={(e: any) => { subjectFuntions.updateEnrollmentStatus(e.target.innerText.toLowerCase()); setEnrollmentDropdownOpen(false) }} className="option">
+                                                <p>Screening</p>
                                             </div>
-                                            <div onClick={(e: any) => { subjectFuntions.updateEnrollmentStatus(e.target.innerText); setEnrollmentDropdownOpen(false) }} className="option">
+                                            {/* <div onClick={(e: any) => { subjectFuntions.updateEnrollmentStatus(e.target.innerText); setEnrollmentDropdownOpen(false) }} className="option">
                                                 <p>Screened</p>
-                                            </div>
-                                            <div onClick={(e: any) => { subjectFuntions.updateEnrollmentStatus(e.target.innerText); setEnrollmentDropdownOpen(false) }} className="option">
+                                            </div> */}
+                                            <div onClick={(e: any) => { subjectFuntions.updateEnrollmentStatus(e.target.innerText.toLowerCase()); setEnrollmentDropdownOpen(false) }} className="option">
                                                 <p>Randomized</p>
                                             </div>
                                         </div>
@@ -487,10 +492,10 @@ const AddSubjectModal = ({ open, nextSubjectId, onClose }: AddSubjectModalProps)
                                 </div>
                                 <div className="row px-2">
                                     <div className="element screeningDate">
-                                        <p className="subheading">Screening date {(newSubject.status === "Screened" || newSubject.status === "Randomized") && <span className="red-text">*</span>}</p>
+                                        <p className="subheading">Screening date <span className="red-text">*</span></p>
                                         <div className="inputBox">
                                             {/* <input type="text" className="input-primary" placeholder='Enter Date' /> */}
-                                            <ReactDatePicker selected={screenDate} onChange={(date: Date) => setScreenDate(timeFunctions.datinormal(date))} className='input-primary' placeholderText='Enter Date' />
+                                            <ReactDatePicker selected={screenDate} onChange={(date: Date) => setScreenDate(timeFunctions.datinormal(date))} className='input-primary' placeholderText='mm/dd/yyyy' />
                                             <div className="right-icon">
                                                 {screenDate ?
                                                     <span onClick={() => setScreenDate("")} className="material-symbols-outlined large gray-text pointer">close</span>
@@ -500,12 +505,15 @@ const AddSubjectModal = ({ open, nextSubjectId, onClose }: AddSubjectModalProps)
                                             </div>
                                         </div>
                                     </div>
-                                    {newSubject.status === "Randomized" &&
+                                    {newSubjectPrecursor.status === "randomized" &&
                                         <div className="element enrollmentDate">
                                             <p className="subheading">Enrollment date <span className="red-text">*</span></p>
                                             <div className="inputBox">
                                                 {/* <input type="text" className="input-primary" placeholder='Enter Date' /> */}
-                                                <ReactDatePicker selected={enrollDate} onChange={(date: Date) => setEnrollDate(timeFunctions.datinormal(date))} className='input-primary' placeholderText='Enter Date' />
+                                                <ReactDatePicker selected={enrollDate} 
+                                                onChange={(date: Date) => setEnrollDate(timeFunctions.datinormal(date))} 
+                                                className='input-primary' 
+                                                placeholderText='mm/dd/yyyy' />
                                                 <div className="right-icon">
                                                     {enrollDate ?
                                                         <span onClick={() => setEnrollDate("")} className="material-symbols-outlined large gray-text pointer">close</span>
@@ -517,7 +525,7 @@ const AddSubjectModal = ({ open, nextSubjectId, onClose }: AddSubjectModalProps)
                                         </div>
                                     }
                                 </div>
-                                {newSubject.status !== "Not Screened" &&
+                                {newSubjectPrecursor.status === "randomized" &&
                                     <div className="row-2 px-2 flx-wrap gap-4">
                                         <div className="element optionalStudy">
                                             <div className="flx-r gap-1">
@@ -547,7 +555,7 @@ const AddSubjectModal = ({ open, nextSubjectId, onClose }: AddSubjectModalProps)
                         </div>
 
                         <div className="footer">
-                            <button onClick={() => addSubject()} className="btn-primary small">Add Subject</button>
+                            <button onClick={() => addSubjectInitiation()} className="btn-primary small">Add Subject</button>
                             <button onClick={() => onClose()} className="btn-secondary small">Cancel</button>
                         </div>
                     </div>

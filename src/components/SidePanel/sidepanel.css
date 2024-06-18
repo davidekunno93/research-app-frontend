@@ -2,7 +2,7 @@
     width: 240px;
     height: 100%;
     border-right: 1px solid gainsboro;
-    background-color: white;
+    background-color: #2f3a4c;
     padding: 24px 0px 12px 0px;
     box-sizing: border-box;
     display: flex;
@@ -19,13 +19,16 @@
     /* border: 1px solid salmon; */
     transition-duration: 0.2s;
     border-left: 3px solid transparent;
-    color: rgb(130, 130, 130);
+    /* color: rgb(130, 130, 130); */
+    color: rgb(150, 150, 150);
 }
 .sidepanel-container > .option:hover {
-    border-left: 3px solid rgb(9, 175, 0);
+    /* border-left: 3px solid rgb(9, 175, 0); */
+    border-left: 3px solid white;
     padding-left: 28px;
     transition-duration: 0.2s;
     color: rgb(0, 190, 0);
+    color: white;
 }
 .sidepanel-container > .option p {
     font-size: 14px;
