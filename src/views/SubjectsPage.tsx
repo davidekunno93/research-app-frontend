@@ -694,7 +694,27 @@ const SubjectsPage = ({ study }: SubjectsPageProps) => {
 
             setSubjects(subjectsCopy);
 
-        }
+        },
+        openSubjectDropdown: function (subjectId: string) {
+            const btn = document.getElementById(`subject-dropper-${subjectId}`);
+            const dropdown = document.getElementById(`subject-dropdown-${subjectId}`);
+            btn?.classList.add('pressed');
+            dropdown?.classList.replace('hidden', 'shown');
+        },
+        closeSubjectDropdown: function (subjectId: string) {
+            const btn = document.getElementById(`subject-dropper-${subjectId}`);
+            const dropdown = document.getElementById(`subject-dropdown-${subjectId}`);
+            btn?.classList.remove('pressed');
+            dropdown?.classList.replace('shown', 'hidden');
+        },
+        toggleSubjectDropdown: function (subjectId: string) {
+            const btn = document.getElementById(`subject-dropper-${subjectId}`);
+            if (btn?.classList.contains('pressed')) {
+                subjectFunctions.closeSubjectDropdown(subjectId);
+            } else {
+                subjectFunctions.openSubjectDropdown(subjectId);                
+            }
+        },
     }
     const studyFunctions = {
         addSubject: function (subjectPrecursor: SubjectPrecursor) {
@@ -749,6 +769,7 @@ const SubjectsPage = ({ study }: SubjectsPageProps) => {
             subjectsCopy[newSubject.id] = newSubject;
             setSubjects(subjectsCopy);
         },
+        
     }
 
 
@@ -905,7 +926,23 @@ const SubjectsPage = ({ study }: SubjectsPageProps) => {
                                     const searchIDFilter = searchText ? subject.id.includes(searchText) : true;
                                     const searchInitialsFilter = searchText ? subject.demographics.initials.includes(searchText.toUpperCase()) : true;
                                     return (searchIDFilter || searchInitialsFilter) && <div key={index} className="row">
-                                        <div className="col-options material-symbols-outlined">more_vert</div>
+                                        <div className="col-options">
+                                            <span onClick={() => subjectFunctions.toggleSubjectDropdown(subject.id)} id={`subject-dropper-${subject.id}`} className="material-symbols-outlined pointer">more_vert</span>
+                                            <div id={`subject-dropdown-${subject.id}`} className="subject-dropdown hidden">
+                                                <div className="option">
+                                                    <span className="material-symbols-outlined">edit</span>
+                                                    <p>Edit Details</p>
+                                                </div>
+                                                <div className="option">
+                                                    <span className="material-symbols-outlined">comment</span>
+                                                    <p>Add Comment</p>
+                                                </div>
+                                                <div className="option red-text">
+                                                    <span className="material-symbols-outlined">close</span>
+                                                    <p>Delete Subject</p>
+                                                </div>
+                                            </div>
+                                        </div>
                                         <p className="col">{subject.id}</p>
                                         <p className="col">{subject.demographics.initials}</p>
                                         <p className="col">{subject.demographics.birthYear}</p>

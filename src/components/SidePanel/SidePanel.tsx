@@ -5,9 +5,11 @@ const SidePanel = () => {
     <>
       <div className="sidepanel-container">
 
-        <div className="option">
-          <span className="material-symbols-outlined">person_search</span>
-          <p className="m-0">Subjects</p>
+        <div className="option selected">
+          <div className="icon">
+            <span className="material-symbols-outlined">person_search</span>
+          </div>
+          <p>Subjects</p>
         </div>
         <div className="option">
           <span className="material-symbols-outlined">menu_book</span>

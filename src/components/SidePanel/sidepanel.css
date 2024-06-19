@@ -1,42 +1,61 @@
 .sidepanel-container {
     width: 240px;
+    width: 64px;
     height: 100%;
-    border-right: 1px solid gainsboro;
     background-color: #2f3a4c;
-    padding: 24px 0px 12px 0px;
+    padding: 24px 12px;
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 16px;
+    overflow: hidden;
+    transition: 0.5s;
+}
+.sidepanel-container:hover {
+    width: 240px;    
 }
 .sidepanel-container > .option {
-    padding: 12px 24px;
+    height: 44px;
+    width: 100%;
     display: flex;
+    display: grid;
+    grid-template-columns: 40px 1fr;
     align-items: center;
     gap: 12px;
     cursor: pointer;
     color: black;
     /* border: 1px solid salmon; */
     transition-duration: 0.2s;
-    border-left: 3px solid transparent;
+    /* border-left: 3px solid transparent; */
     /* color: rgb(130, 130, 130); */
     color: rgb(150, 150, 150);
+    white-space: nowrap;
+}
+.sidepanel-container > .option.selected {
+    color: white;
+}
+.sidepanel-container > .option > .icon {
+    width: 100%;
+    /* width: 40px; */
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 .sidepanel-container > .option:hover {
-    /* border-left: 3px solid rgb(9, 175, 0); */
-    border-left: 3px solid white;
-    padding-left: 28px;
     transition-duration: 0.2s;
-    color: rgb(0, 190, 0);
-    color: white;
+    /* color: white; */
+    background-color: #252d3c;
+    border-radius: 4px;
 }
 .sidepanel-container > .option p {
     font-size: 14px;
     font-weight: 400;
+    text-align: left;
+    padding-left: 4px;
 }
-.sidepanel-container > .option:hover p {
+/* .sidepanel-container > .option:hover p {
     font-weight: 500;
-}
+} */
 .sidepanel-container > .option span {
-    font-size: 20px;
+    font-size: 22px;
 }
