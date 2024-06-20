@@ -502,6 +502,20 @@ button:focus-visible {
   font-weight: 700;
 }
 
+.ws-nowrap {
+  white-space: nowrap;
+}
+.ws-normal {
+  white-space: normal;
+}
+.ws-preline {
+  white-space: pre-line;
+}
+.stack-text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1;
+}
 .font-jakarta {
   font-family: 'Plus Jakarta Sans';
 }
@@ -1539,4 +1553,23 @@ button:focus-visible {
   position: absolute;
   top: 6px;
   left: 10px;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.d-none {
+  display: none;
 }

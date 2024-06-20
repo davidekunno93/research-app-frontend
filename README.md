@@ -53,3 +53,4 @@ icf must be signed at screening feedback
 update subject status (screening/rando/etc. as updating visit dates)
 finalize subject status code in addsubjectmodal, esp. w optional ICFs, how is that to be handled?
 how do you see visit general window
+when slide subjects to the side the subject id pops up

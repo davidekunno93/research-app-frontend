@@ -5,6 +5,7 @@ import SidePanel from './components/SidePanel/SidePanel'
 import PageHeader from './components/Page Header/PageHeader'
 import SubjectsPage from './views/SubjectsPage'
 import { Study } from './TypeFile'
+import RightSidePanel from './components/RightSidePanel/RightSidePanel'
 
 
 function App() {
@@ -176,6 +177,9 @@ function App() {
           <Routes>
             <Route children path='/' element={<SubjectsPage study={predictStudy} />} />
           </Routes>
+        </div>
+        <div className="">
+          <RightSidePanel />
         </div>
       </div>
 

@@ -14,6 +14,7 @@
 .sidepanel-container:hover {
     width: 240px;    
 }
+
 .sidepanel-container > .option {
     height: 44px;
     width: 100%;
@@ -52,10 +53,13 @@
     font-weight: 400;
     text-align: left;
     padding-left: 4px;
+    opacity: 0;
+    transition: 0.4s;
 }
-/* .sidepanel-container > .option:hover p {
-    font-weight: 500;
-} */
+.sidepanel-container:hover .option p {
+    opacity: 1;
+    transition-delay: 0.2s;
+}
 .sidepanel-container > .option span {
     font-size: 22px;
 }

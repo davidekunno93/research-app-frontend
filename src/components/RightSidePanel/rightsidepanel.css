@@ -1,0 +1,123 @@
+.rightsidepanel-container {
+    height: 100%;
+    background-color: white;
+    box-shadow: 0 0 12px rgba(0, 0, 0, 0.04);
+    border-left: 1px solid gainsboro;
+    display: flex;
+    flex-direction: row;
+    box-sizing: border-box;
+    transition: 0.2s;
+}
+.rightsidepanel-options {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    width: 44px;
+    padding: 24px 8px;
+    box-sizing: border-box;
+}
+.rightsidepanel-options > .option {
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: 0.2s;
+    color: #2f3a4c;
+    position: relative;
+}
+.rightsidepanel-options > .option:hover {
+    background-color: gainsboro;
+    color: black;
+    transition: 0.2s;
+}
+.rightsidepanel-options > .option > .tooltip {
+    position: absolute;
+    right: calc(100% + 24px);
+    transition-duration: 0.2s;
+
+    transition-delay: 0s;
+    visibility: hidden;
+    opacity: 0;    
+}
+.rightsidepanel-options > .option:hover > .tooltip {
+    visibility: visible;
+    opacity: 1;    
+    transition-delay: 1.5s;
+}
+
+.rightsidepanel-options > .option .tooltip-box {
+    display: flex;
+    align-items: center;
+    padding: 6px 12px;
+    background-color: #2f3a4c;
+    border-radius: 4px;
+}
+.rightsidepanel-options > .option .tooltip-box p {
+    color: white;
+    font-size: 14px;
+    white-space: nowrap;
+}
+.rightsidepanel-options > .option .tooltip-box::after {
+    content: "";
+    position: absolute;
+    width: 0;
+    height: 0;
+    border-top: 6px solid transparent;
+    border-left: 8px solid #2f3a4c;
+    border-bottom: 6px solid transparent;
+    left: 100%;
+}
+.rightsidepanel-content {
+    width: 300px;
+    height: 100%;
+    box-sizing: border-box;
+    background-color: white;
+    border-left: 1px solid gainsboro;
+    transition: 0.4s;
+}
+.view-visit .head {
+    padding: 24px 24px 12px 24px;
+    align-items: flex-start;
+}
+
+.view-visit .title {
+    font-size: x-large;
+    font-weight: 500;
+}
+.view-visit .subject-number {
+    color: gray;
+}
+.view-visit .date, 
+.view-visit .status {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 6px;
+}
+/* .view-visit .date p {
+
+} */
+.view-visit .status p {
+    font-size: 12px;
+}
+.view-visit .date span {
+    font-size: 16px;
+    color: gainsboro;
+} 
+.view-visit .status span {
+    font-size: 12px;
+    color: gainsboro;
+}
+.view-visit .body {
+    padding: 12px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+.detail {
+    display: flex;
+    flex-direction: row;
+    gap: 6px;
+}

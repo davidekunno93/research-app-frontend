@@ -137,6 +137,13 @@
     position: relative;
     /* overflow: hidden; */
 }
+.row {
+    transition: 0.5s;
+}
+.row:hover {
+    background-color: rgba(245, 245, 245, 0.8);
+    transition: 0.5s;
+}
 
 .col>.fill-div {
     width: 100%;
@@ -284,7 +291,7 @@
     top: 60%;
     display: flex;
     flex-direction: column;
-    transition: 0.2s;
+    transition: 0.1s;
 }
 
 .col .dropdown.hidden {
