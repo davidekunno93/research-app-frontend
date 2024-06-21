@@ -4,8 +4,9 @@ import Navbar from './components/Navbar/Navbar'
 import SidePanel from './components/SidePanel/SidePanel'
 import PageHeader from './components/Page Header/PageHeader'
 import SubjectsPage from './views/SubjectsPage'
-import { Study } from './TypeFile'
+import { Study, StudyVisit, SubjectVisit } from './TypeFile'
 import RightSidePanel from './components/RightSidePanel/RightSidePanel'
+import { useState } from 'react'
 
 
 function App() {
@@ -23,7 +24,7 @@ function App() {
   //   site: "016"
   // }
 
-  const predictStudy : Study = {
+  const predictStudy: Study = {
     studyInfo: {
       studyName: "PREDICT",
       protocol: "PREDICT-001",
@@ -117,13 +118,13 @@ function App() {
     },
     visitOrder: ["visit-1", "visit-2", "visit-3"],
     visitTypes: {
-      "screening": ["visit-1"], 
-      "run-in" : [],
-      "baseline": ["visit-2"], 
+      "screening": ["visit-1"],
+      "run-in": [],
+      "baseline": ["visit-2"],
       "treatment": ["visit-3"],
-      "end-of-treatment" : [],
-      "follow-up" : [],
-      "end-of-study" : [],
+      "end-of-treatment": [],
+      "follow-up": [],
+      "end-of-study": [],
     },
     unscheduled: {
       "unsched-1": {
@@ -164,6 +165,34 @@ function App() {
   //   sponsor: "Janssen",
   //   site: "US10075"
   // }
+  type RightPanelState = {
+    open: boolean
+    subjectId: string | null
+    subjectVisit: SubjectVisit | null
+    studyVisit: StudyVisit | null
+  }
+  const [rightPanelState, setRightPanelState] = useState<RightPanelState>({
+    open: false,
+    subjectId: null,
+    subjectVisit: null,
+    studyVisit: null,
+  });
+  const openRightSidePanel = (subjectId: string, subjectVisit: SubjectVisit, studyVisit: StudyVisit) => {
+    setRightPanelState({
+      open: true,
+      subjectId: subjectId,
+      subjectVisit: subjectVisit,
+      studyVisit: studyVisit,
+    })
+  };
+  const closeRightSidePanel = () => {
+    setRightPanelState({
+      open: false,
+      subjectId: null,
+      subjectVisit: null,
+      studyVisit: null,
+    })
+  };
 
   return (
     <>
@@ -175,11 +204,11 @@ function App() {
         <div className="flx-1 flx-c">
           <PageHeader studyInfo={predictStudy.studyInfo} />
           <Routes>
-            <Route children path='/' element={<SubjectsPage study={predictStudy} />} />
+            <Route children path='/' element={<SubjectsPage study={predictStudy} openRightSidePanel={openRightSidePanel} />} />
           </Routes>
         </div>
         <div className="">
-          <RightSidePanel />
+          <RightSidePanel open={rightPanelState.open} subjectId={rightPanelState.subjectId} subjectVisit={rightPanelState.subjectVisit} studyVisit={rightPanelState.studyVisit} onClose={() => closeRightSidePanel()} />
         </div>
       </div>
 

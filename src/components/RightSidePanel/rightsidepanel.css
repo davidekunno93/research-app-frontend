@@ -8,6 +8,7 @@
     box-sizing: border-box;
     transition: 0.2s;
 }
+
 .rightsidepanel-options {
     display: flex;
     flex-direction: column;
@@ -16,7 +17,8 @@
     padding: 24px 8px;
     box-sizing: border-box;
 }
-.rightsidepanel-options > .option {
+
+.rightsidepanel-options>.option {
     height: 44px;
     display: flex;
     align-items: center;
@@ -27,39 +29,44 @@
     color: #2f3a4c;
     position: relative;
 }
-.rightsidepanel-options > .option:hover {
-    background-color: gainsboro;
+
+.rightsidepanel-options>.option:hover {
+    background-color: rgb(240, 240, 240);
     color: black;
     transition: 0.2s;
 }
-.rightsidepanel-options > .option > .tooltip {
+
+.rightsidepanel-options>.option>.tooltip {
     position: absolute;
     right: calc(100% + 24px);
     transition-duration: 0.2s;
 
     transition-delay: 0s;
     visibility: hidden;
-    opacity: 0;    
+    opacity: 0;
 }
-.rightsidepanel-options > .option:hover > .tooltip {
+
+.rightsidepanel-options>.option:hover>.tooltip {
     visibility: visible;
-    opacity: 1;    
+    opacity: 1;
     transition-delay: 1.5s;
 }
 
-.rightsidepanel-options > .option .tooltip-box {
+.rightsidepanel-options>.option .tooltip-box {
     display: flex;
     align-items: center;
     padding: 6px 12px;
     background-color: #2f3a4c;
     border-radius: 4px;
 }
-.rightsidepanel-options > .option .tooltip-box p {
+
+.rightsidepanel-options>.option .tooltip-box p {
     color: white;
     font-size: 14px;
     white-space: nowrap;
 }
-.rightsidepanel-options > .option .tooltip-box::after {
+
+.rightsidepanel-options>.option .tooltip-box::after {
     content: "";
     position: absolute;
     width: 0;
@@ -69,16 +76,40 @@
     border-bottom: 6px solid transparent;
     left: 100%;
 }
+
 .rightsidepanel-content {
-    width: 300px;
+    width: 0px;
     height: 100%;
     box-sizing: border-box;
-    background-color: white;
+    background-color: whitesmoke;
     border-left: 1px solid gainsboro;
+    color: #242424;
     transition: 0.4s;
+    position: relative;
+    overflow: hidden;
+}
+.rightsidepanel-content.hidden {
+    visibility: hidden;
+    opacity: 0;
+    transition: opacity 0.4s, visibility 0.4s, width 0.4s 0.4s;
+}
+.rightsidepanel-content.shown {
+    width: 300px;
+    visibility: visible;
+    opacity: 1;
+    transition: opacity 0.4s 0.4s, width 0.4s;
+}
+.rightsidepanel-content .closeBtn {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    cursor: pointer;
+}
+.rightsidepanel-content .closeBtn > span {
+    font-size: large;
 }
 .view-visit .head {
-    padding: 24px 24px 12px 24px;
+    padding: 12px 24px 12px 24px;
     align-items: flex-start;
 }
 
@@ -86,38 +117,70 @@
     font-size: x-large;
     font-weight: 500;
 }
+
 .view-visit .subject-number {
     color: gray;
 }
-.view-visit .date, 
+
+.view-visit .date,
 .view-visit .status {
     display: flex;
     flex-direction: row;
     align-items: center;
     gap: 6px;
 }
+
 /* .view-visit .date p {
 
 } */
 .view-visit .status p {
     font-size: 12px;
 }
+
 .view-visit .date span {
     font-size: 16px;
     color: gainsboro;
-} 
+}
+
 .view-visit .status span {
     font-size: 12px;
     color: gainsboro;
 }
+
 .view-visit .body {
     padding: 12px 24px;
     display: flex;
     flex-direction: column;
     gap: 6px;
 }
+
 .detail {
     display: flex;
     flex-direction: row;
+    align-items: baseline;
     gap: 6px;
+}
+
+.detail .key {
+    font-weight: 600;
+    font-size: 12px;
+}
+
+.detail p {
+    font-size: 14px;
+    white-space: nowrap;
+}
+
+.detail span {
+    font-size: 22px;
+}
+
+.detail-drop {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 8px;
+    gap: 6px;
+    border-bottom: 1px solid gainsboro;
+    cursor: pointer;
 }

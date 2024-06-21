@@ -25,7 +25,7 @@
 .filter-dropdownDiv>.dropdown-selector {
     background-color: white;
     width: 150px;
-    border-radius: 8px;
+    border-radius: 4px;
     border: 1px solid gainsboro;
     box-shadow: 0 0 12px rgba(0, 0, 0, 0.07);
     position: absolute;
@@ -137,10 +137,10 @@
     position: relative;
     /* overflow: hidden; */
 }
-.row {
+.subject-table .row {
     transition: 0.5s;
 }
-.row:hover {
+.subject-table .row:hover {
     background-color: rgba(245, 245, 245, 0.8);
     transition: 0.5s;
 }
@@ -371,6 +371,9 @@
 }
 .subject-dropdown > .option span {
     font-size: medium;
+}
+.subject-dropdown > .option p {
+    font-size: 14px;
 }
 
 .subject-dropdown > .option:hover {
