@@ -40,7 +40,7 @@ const RightSidePanel = ({ open, subjectId, subjectVisit, studyVisit, onClose }: 
             openPanel();
         }
     }, [open])
-    
+
     const openPanel = () => {
         const content = document.getElementById("rightPanelContent");
         wait(100).then(() => {
@@ -79,12 +79,13 @@ const RightSidePanel = ({ open, subjectId, subjectVisit, studyVisit, onClose }: 
 
             {open && subjectId && subjectVisit && studyVisit &&
                 <div id="rightPanelContent" className="rightsidepanel-content hidden">
+                    <div className="view-visit">
+                        <div className="fillDiv">
                     <div onClick={() => closePanel()} className="closeBtn">
                         <span className="material-symbols-outlined">
                             close
                         </span>
                     </div>
-                    <div className="view-visit">
                         <div className="head">
                             <p className="subject-number">#{subjectId}</p>
                             <div className="flx-r gap-4 align-c w-100">
@@ -140,11 +141,25 @@ const RightSidePanel = ({ open, subjectId, subjectVisit, studyVisit, onClose }: 
                             <p className="bold500">Visit Description</p>
                         </div> */}
                             <div className="detail-drop">
-                                <span className="material-symbols-outlined">keyboard_arrow_down</span>
-                                <p className="bold500">Comments</p>
+                                <div className="dropper">
+                                    <span className="material-symbols-outlined">keyboard_arrow_down</span>
+                                    <p className="bold500">Comments</p>
+                                </div>
+                                <div className="dropdown">
+                                    <div className="commentBox">
+                                        <p className="comment">Lorem ipsum dolor sit, amet consectetur adipisicing elit.
+                                            Blanditiis, mollitia adipisci porro fuga inventore repudiandae.
+                                            Voluptatibus consequuntur fuga dignissimos aut nisi. Eos totam,
+                                            a obcaecati repellendus aut ipsum at commodi.</p>
+                                            <div className="footer">
+                                                <p className="timeStamp">{timeFunctions.datidash("06/21/2024")} &bull; 17:25</p>
+                                                <p className="byUser">David Ekunno</p>
+                                            </div>
+                                    </div>
+                                </div>
                             </div>
 
-
+                            </div>
                         </div>
                     </div>
                 </div>

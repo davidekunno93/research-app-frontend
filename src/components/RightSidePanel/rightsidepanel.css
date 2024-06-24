@@ -108,8 +108,21 @@
 .rightsidepanel-content .closeBtn > span {
     font-size: large;
 }
+.view-visit {
+    height: 100%;
+    display: flex;
+}
+.view-visit .fillDiv {
+    height: calc(100% - 16px);
+    width: calc(100% - 16px);
+    margin: auto;
+    box-sizing: border-box;
+    background-color: rgb(226, 231, 246);
+    border-radius: 8px;
+    position: relative;
+}
 .view-visit .head {
-    padding: 12px 24px 12px 24px;
+    padding: 12px 24px 8px 24px;
     align-items: flex-start;
 }
 
@@ -148,7 +161,7 @@
 }
 
 .view-visit .body {
-    padding: 12px 24px;
+    padding: 8px 24px;
     display: flex;
     flex-direction: column;
     gap: 6px;
@@ -176,6 +189,9 @@
 }
 
 .detail-drop {
+    position: relative;
+}
+.detail-drop .dropper {
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -183,4 +199,31 @@
     gap: 6px;
     border-bottom: 1px solid gainsboro;
     cursor: pointer;
+}
+.detail-drop .dropdown {
+    height: 100px;
+    /* background-color: beige; */
+}
+.detail-drop .dropdown .commentBox {
+
+}
+.commentBox .comment {
+    padding: 8px 0px;
+    font-size: 13px;
+    text-align: left;
+}
+.commentBox .footer {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+.commentBox .footer p {
+    font-size: 12px;
+}
+.commentBox .timeStamp {
+    color: gray;
+}
+.commentBox .byUser {
+    color: #242424;
+    font-weight: 600;
 }
